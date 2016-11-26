@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"github.com/qnib/qwatch/server"
-	//"github.com/qnib/qwatch/types"
 	"github.com/spf13/cobra"
     "github.com/spf13/viper"
 )
