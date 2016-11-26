@@ -26,7 +26,7 @@ var cfgFile string
 
 // RootCmd This represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
-	Use:   "qcollect",
+	Use:   "qwatch",
 	Short: "Framework to collect,filter and outpur log and events",
 	Long:  `ETL written in go, inspired by Logstash`,
 }
