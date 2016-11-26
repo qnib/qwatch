@@ -273,40 +273,46 @@
 			"revisionTime": "2016-05-04T13:01:55Z"
 		},
 		{
-			"checksumSHA1": "8QjvAGitQF12m0NUWJo/vRM985Y=",
+			"checksumSHA1": "pU71isigtwQemd0aDce3hVNLS6k=",
+			"path": "github.com/qnib/qwatch",
+			"revision": "3a2c81f2903c90d3fd1b3cfef77acaf9d054ac26",
+			"revisionTime": "2016-11-26T13:40:24Z"
+		},
+		{
+			"checksumSHA1": "t8ve1a4qsO6uLSMKmEM6pIw4wfg=",
 			"path": "github.com/qnib/qwatch/cmd",
-			"revision": "97f61726cf18af6bfa5dafae7c0f91cdbbdd128c",
-			"revisionTime": "2016-11-26T11:11:17Z"
+			"revision": "3a2c81f2903c90d3fd1b3cfef77acaf9d054ac26",
+			"revisionTime": "2016-11-26T13:40:24Z"
 		},
 		{
-			"checksumSHA1": "EDm5mnvkF8YEHg5e2X57pEHbW8w=",
+			"checksumSHA1": "itcbbk0UujUO3wdeNLK6TOOUbPk=",
 			"path": "github.com/qnib/qwatch/collectors",
-			"revision": "97f61726cf18af6bfa5dafae7c0f91cdbbdd128c",
-			"revisionTime": "2016-11-26T11:11:17Z"
+			"revision": "3a2c81f2903c90d3fd1b3cfef77acaf9d054ac26",
+			"revisionTime": "2016-11-26T13:40:24Z"
 		},
 		{
-			"checksumSHA1": "JE3QkdDvd8146n8WRmBjZrI+umw=",
+			"checksumSHA1": "ZXzHjl5CscvOr1V9tLhPCk8VN+c=",
 			"path": "github.com/qnib/qwatch/handlers",
-			"revision": "97f61726cf18af6bfa5dafae7c0f91cdbbdd128c",
-			"revisionTime": "2016-11-26T11:11:17Z"
+			"revision": "3a2c81f2903c90d3fd1b3cfef77acaf9d054ac26",
+			"revisionTime": "2016-11-26T13:40:24Z"
 		},
 		{
-			"checksumSHA1": "3PqYoH23zNzGx0fNOvPubdno/1Y=",
+			"checksumSHA1": "ONqFB6bTY8tmCDnjNosWFMPbB9A=",
 			"path": "github.com/qnib/qwatch/server",
-			"revision": "97f61726cf18af6bfa5dafae7c0f91cdbbdd128c",
-			"revisionTime": "2016-11-26T11:11:17Z"
+			"revision": "3a2c81f2903c90d3fd1b3cfef77acaf9d054ac26",
+			"revisionTime": "2016-11-26T13:40:24Z"
 		},
 		{
-			"checksumSHA1": "yDdyxHX1kksv0AbFLwGW/SSZJh0=",
+			"checksumSHA1": "2AUjl/KneMFCYf04WdrYem5fCKg=",
 			"path": "github.com/qnib/qwatch/types",
-			"revision": "97f61726cf18af6bfa5dafae7c0f91cdbbdd128c",
-			"revisionTime": "2016-11-26T11:11:17Z"
+			"revision": "3a2c81f2903c90d3fd1b3cfef77acaf9d054ac26",
+			"revisionTime": "2016-11-26T13:40:24Z"
 		},
 		{
-			"checksumSHA1": "uvHrdltH5KLyewb5KuzlFw4/leQ=",
+			"checksumSHA1": "mfgWH0BsKKBmcTRJ2+XQq5/S1wk=",
 			"path": "github.com/qnib/qwatch/utils",
-			"revision": "97f61726cf18af6bfa5dafae7c0f91cdbbdd128c",
-			"revisionTime": "2016-11-26T11:11:17Z"
+			"revision": "3a2c81f2903c90d3fd1b3cfef77acaf9d054ac26",
+			"revisionTime": "2016-11-26T13:40:24Z"
 		},
 		{
 			"checksumSHA1": "65+hx0QlLzpWe5pnjAzteKBnC10=",
@@ -343,6 +349,18 @@
 			"path": "github.com/stretchr/testify/assert",
 			"revision": "6cb3b85ef5a0efef77caef88363ec4d4b5c0976d",
 			"revisionTime": "2016-05-04T13:01:55Z"
+		},
+		{
+			"checksumSHA1": "mHy1hFWDgoulRMlkY3OBo2LynyM=",
+			"path": "github.com/twmb/algoimpl/go/graph",
+			"revision": "716f8e78b563212cfefb120bedc265741f51d1a4",
+			"revisionTime": "2013-09-27T17:23:13Z"
+		},
+		{
+			"checksumSHA1": "yTrRn+yrT3NYArPNggZvEJ+dTKg=",
+			"path": "github.com/twmb/algoimpl/go/graph/lite",
+			"revision": "716f8e78b563212cfefb120bedc265741f51d1a4",
+			"revisionTime": "2013-09-27T17:23:13Z"
 		},
 		{
 			"checksumSHA1": "9QKY4bQlbQ/VZZFP8/1WtH4b0mA=",
