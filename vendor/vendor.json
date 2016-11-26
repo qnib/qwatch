@@ -345,11 +345,11 @@
 			"revisionTime": "2016-05-04T13:01:55Z"
 		},
 		{
-			"checksumSHA1": "5ARrN3Zq+E9zazFb/N+b08Serys=",
+			"checksumSHA1": "9QKY4bQlbQ/VZZFP8/1WtH4b0mA=",
 			"origin": "github.com/docker/docker/vendor/golang.org/x/net/context",
 			"path": "golang.org/x/net/context",
-			"revision": "08f168e593b5aab61849054b77981de812666697",
-			"revisionTime": "2016-02-27T07:10:08Z"
+			"revision": "c36c63b308acbacefcd088f7bc0b0b68c79d9334",
+			"revisionTime": "2016-11-25T20:18:09Z"
 		},
 		{
 			"checksumSHA1": "EJMLw8rk55bsqmIpSMtVORJpSGo=",
@@ -392,5 +392,5 @@
 			"revisionTime": "2015-02-24T22:57:58Z"
 		}
 	],
-	"rootPath": "github.com/ChristianKniep/qwatch"
+	"rootPath": "github.com/qnib/qwatch"
 }
