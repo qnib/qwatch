@@ -1,0 +1,11 @@
+mode: set
+github.com/qnib/qwatch/cmd/root.go:36.16,37.42 1 0
+github.com/qnib/qwatch/cmd/root.go:37.42,40.3 2 0
+github.com/qnib/qwatch/cmd/root.go:43.13,52.2 1 1
+github.com/qnib/qwatch/cmd/root.go:55.19,56.19 1 0
+github.com/qnib/qwatch/cmd/root.go:60.2,67.45 6 0
+github.com/qnib/qwatch/cmd/root.go:56.19,58.3 1 0
+github.com/qnib/qwatch/cmd/root.go:67.45,69.3 1 0
+github.com/qnib/qwatch/cmd/server.go:17.13,27.2 7 1
+github.com/qnib/qwatch/cmd/version.go:14.50,16.6 1 0
+github.com/qnib/qwatch/cmd/version.go:19.13,21.2 1 1
