@@ -1,0 +1,196 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">github.com/ChristianKniep/qwatch/types/types.go (100.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package qtypes
+
+import (
+        "os"
+        "time"
+    "fmt"
+    "strings"
+)
+
+// Channels holds the communication channels
+type Channels struct {
+        Tick &lt;-chan time.Time
+        Log  chan Qmsg
+        Done chan os.Signal
+}
+
+// ContainerInfo holds information when the message was emmited by a container
+type ContainerInfo struct {
+    Command       string  `json:"_command"`
+        ContainerID   string  `json:"_container_id"`
+        ContainerName string  `json:"_container_name"`
+        Created       string  `json:"_created"`
+        ImageID       string  `json:"_image_id"`
+        ImageName     string  `json:"_image_name"`
+        Tag           string  `json:"_tag"`
+
+}
+
+// GetCntInfo returns string representation for logging
+func (ci *ContainerInfo) GetCntInfo() string <span class="cov8" title="1">{
+    info := fmt.Sprintf("Image:%-15s # Name:%-15s", ci.ImageName, ci.ContainerName)
+    return strings.TrimRight(info, " ")
+}</span>
+
+// Qmsg holds a GELF message from a container
+type Qmsg struct {
+        Version       string           `json:"version"`
+        Type          string           `json:"type"`
+    Source        string           `json:"source"`
+        Host          string           `json:"host"`
+        Msg           string           `json:"short_message"`
+        Time          time.Time        `json:"time"`
+        Level         int              `json:"level"`
+        IsContainer   bool             `json:"is_container"`
+    Container     ContainerInfo    `json:"container"`
+}
+// GetCntInfo returns container info if a container is involved, an empty string otherwise
+func (qm *Qmsg) GetCntInfo() string <span class="cov8" title="1">{
+    if qm.IsContainer </span><span class="cov8" title="1">{
+        return qm.Container.GetCntInfo()
+    }</span>
+    <span class="cov8" title="1">return ""</span>
+}
+
+// GelfMsg holds a GELF message from a container
+type GelfMsg struct {
+        Version       string `json:"version"`
+        Host          string  `json:"host"`
+        Msg           string  `json:"short_message"`
+        Timestamp     float32 `json:"timestamp"`
+        Level         int     `json:"level"`
+        Command       string  `json:"_command"`
+        ContainerID   string  `json:"_container_id"`
+        ContainerName string  `json:"_container_name"`
+        Created       string  `json:"_created"`
+        ImageID       string  `json:"_image_id"`
+        ImageName     string  `json:"_image_name"`
+        Tag           string  `json:"_tag"`
+}
+
+// NewQmsg create an instance of Log
+func NewQmsg(source, msg, host string) Qmsg <span class="cov8" title="1">{
+        return Qmsg{
+                Version:       "1.1",
+        Source:        source,
+                Host:          host,
+                Msg:           msg,
+                IsContainer:   false,
+        Time:          time.Now(),
+        }
+}</span>
+
+// SetContainer sets information about the container
+func (qm *Qmsg) SetContainer(cnt ContainerInfo) Qmsg <span class="cov8" title="1">{
+    qm.IsContainer = true
+        qm.Container = cnt
+        return *qm
+}</span>
+
+// SetTimestamp updates the Timestamp attribute
+func (qm *Qmsg) SetTimestamp(ts time.Time) Qmsg <span class="cov8" title="1">{
+        qm.Time = ts
+        return *qm
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
