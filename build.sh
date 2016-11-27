@@ -1,5 +1,9 @@
 #!/bin/bash
 
+
+go get -u github.com/kardianos/govendor
+
+
 GIT_ORG_TAG=$(git describe --abbrev=0 --tags)
 git describe --exact-match --abbrev=0 > /dev/null
 if [ $? -ne 0 ];then
