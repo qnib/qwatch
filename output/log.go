@@ -1,4 +1,4 @@
-package qhandler
+package qoutput
 
 import (
     "fmt"

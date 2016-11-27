@@ -6,9 +6,9 @@ import (
     "time"
 
     "github.com/spf13/cobra"
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/events"
-	"github.com/docker/docker/client"
+	"github.com/docker/docker/api/types@v1.12.3"
+	"github.com/docker/docker/api/types/events@v1.12.3"
+	"github.com/docker/docker/client@v1.12.3"
     "golang.org/x/net/context"
 
 	"github.com/qnib/qwatch/types"
