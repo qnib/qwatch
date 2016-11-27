@@ -1,21 +1,21 @@
 package cmd
 
 import (
-    "fmt"
-    "github.com/spf13/cobra"
+	"fmt"
+	"github.com/spf13/cobra"
 )
 
-var version = "0.3.0"
+var version = "0.3.1"
 
 var versionCmd = &cobra.Command{
-    Use:   "version",
-    Short: "Print the version number",
-    Long:  `All software has versions.`,
-    Run: func(cmd *cobra.Command, args []string) {
-        fmt.Println(version)
-    },
+	Use:   "version",
+	Short: "Print the version number",
+	Long:  `All software has versions.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println(version)
+	},
 }
 
 func init() {
-    RootCmd.AddCommand(versionCmd)
+	RootCmd.AddCommand(versionCmd)
 }
