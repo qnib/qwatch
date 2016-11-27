@@ -24,8 +24,10 @@ func ServeQlog(cmd *cobra.Command, args []string) {
 	go qcollect.RunDockerEventCollector(cmd, qC)
 
 	// Handler
-    go qoutput.RunLogHandler(cmd, qC)
-	for {
+    go qoutput.RunLogOutput(cmd, qC)
+    eo := qoutput.NewElasticsearchOutput(cmd, qC)
+    go eo.RunElasticsearchOutput()
+    for {
 	    <-qC.Done
 		fmt.Printf("\nDone\n")
 		return
