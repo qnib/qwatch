@@ -8,7 +8,7 @@ import (
     "github.com/spf13/cobra"
 
 	"github.com/qnib/qwatch/collectors"
-    "github.com/qnib/qwatch/handlers"
+    "github.com/qnib/qwatch/output"
 	//"github.com/qnib/qwatch/types"
 	"github.com/qnib/qwatch/utils"
 )
@@ -24,7 +24,7 @@ func ServeQlog(cmd *cobra.Command, args []string) {
 	go qcollect.RunDockerEventCollector(cmd, qC)
 
 	// Handler
-    go qhandler.RunLogHandler(cmd, qC)
+    go qoutput.RunLogHandler(cmd, qC)
 	for {
 	    <-qC.Done
 		fmt.Printf("\nDone\n")
