@@ -28,7 +28,7 @@ func RunDockerLogCollector(cmd *cobra.Command, qChan qtypes.Channels) {
 	buf := make([]byte, 1024)
 
 	// Join the broadcast group
-	bg := qChan.Group.Join()
+	bg := qChan.Log.Join()
 
 	for {
 		n, _, err := ServerConn.ReadFromUDP(buf)

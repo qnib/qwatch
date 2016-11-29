@@ -36,7 +36,7 @@ func NewElasticsearchOutput(cmd *cobra.Command, qC qtypes.Channels) Elasticsearc
 
 // Takes log from framework and buffers it in elasticsearch buffer
 func (eo *ElasticsearchOutput) pushToBuffer() {
-	bg := eo.qChan.Group.Join()
+	bg := eo.qChan.Log.Join()
 	for {
 		select {
 		case val := <-bg.In:
