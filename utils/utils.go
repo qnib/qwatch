@@ -3,8 +3,6 @@ package utils
 import (
 	"fmt"
 	"os"
-	"strconv"
-	"time"
 
 	"github.com/grafov/bcast"
 	"github.com/qnib/qwatch/types"
@@ -20,12 +18,12 @@ func CheckError(err error) {
 
 // NewChannels create an instance of Channels
 func NewChannels(cmd *cobra.Command) qtypes.Channels {
-	i, _ := strconv.Atoi(cmd.Flag("ticker-interval").Value.String())
-	interval := time.Duration(i) * time.Millisecond
+	//i, _ := strconv.Atoi(cmd.Flag("ticker-interval").Value.String())
+	//interval := time.Duration(i) * time.Millisecond
 	return qtypes.Channels{
-		Tick:  time.NewTicker(interval).C,
-		Log:   make(chan qtypes.Qmsg),
-		Done:  make(chan os.Signal, 1),
-		Group: bcast.NewGroup(), // create broadcast group
+		Log:       bcast.NewGroup(), // create broadcast group
+		Inventory: bcast.NewGroup(), // create broadcast group
+		Tick:      bcast.NewGroup(), // create broadcast group
+		Done:      make(chan os.Signal, 1),
 	}
 }

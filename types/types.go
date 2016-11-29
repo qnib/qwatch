@@ -11,10 +11,10 @@ import (
 
 // Channels holds the communication channels
 type Channels struct {
-	Tick  <-chan time.Time
-	Log   chan Qmsg
-	Done  chan os.Signal
-	Group *bcast.Group
+	Log       *bcast.Group
+	Inventory *bcast.Group
+	Tick      *bcast.Group
+	Done      chan os.Signal
 }
 
 // ContainerInfo holds information when the message was emmited by a container

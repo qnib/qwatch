@@ -9,7 +9,7 @@ import (
 
 // RunLogOutput prints the logs to stdout
 func RunLogOutput(cmd *cobra.Command, qC qtypes.Channels) {
-	bg := qC.Group.Join()
+	bg := qC.Log.Join()
 	for {
 		select {
 		case val := <-bg.In:

@@ -22,16 +22,17 @@ func RunDockerEventCollector(cmd *cobra.Command, qChan qtypes.Channels) {
 	}
 
 	msgs, errs := cli.Events(context.Background(), types.EventsOptions{})
-	bg := qChan.Group.Join()
+	bg := qChan.Log.Join()
 	for {
 		select {
 		case dMsg := <-msgs:
 			bg.Send(parseMessage(dMsg))
 		case dErr := <-errs:
 			if dErr != nil {
-				qChan.Log <- qtypes.Qmsg{
+				qm := qtypes.Qmsg{
 					Msg: fmt.Sprintf("%s", dErr),
 				}
+				bg.Send(qm)
 			}
 		}
 	}
