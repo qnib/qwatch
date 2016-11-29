@@ -3,13 +3,13 @@ package qcollect
 import (
 	"fmt"
 	"os"
-    "time"
+	"time"
 
-    "github.com/spf13/cobra"
 	"github.com/docker/docker/api/types"
-    "github.com/docker/docker/api/types/events"
+	"github.com/docker/docker/api/types/events"
 	"github.com/docker/docker/client"
-    "golang.org/x/net/context"
+	"github.com/spf13/cobra"
+	"golang.org/x/net/context"
 
 	"github.com/qnib/qwatch/types"
 )
@@ -22,11 +22,11 @@ func RunDockerEventCollector(cmd *cobra.Command, qChan qtypes.Channels) {
 	}
 
 	msgs, errs := cli.Events(context.Background(), types.EventsOptions{})
-
+	bg := qChan.Group.Join()
 	for {
 		select {
 		case dMsg := <-msgs:
-			qChan.Log <- parseMessage(dMsg)
+			bg.Send(parseMessage(dMsg))
 		case dErr := <-errs:
 			if dErr != nil {
 				qChan.Log <- qtypes.Qmsg{
@@ -39,21 +39,21 @@ func RunDockerEventCollector(cmd *cobra.Command, qChan qtypes.Channels) {
 
 func parseMessage(msg events.Message) qtypes.Qmsg {
 	host := os.Getenv("DOCKER_HOST")
-    message := fmt.Sprintf("%s.%s", msg.Type, msg.Action)
-    cnt := qtypes.ContainerInfo{
-        ImageName: msg.Actor.Attributes["image"],
-        ContainerID: msg.ID,
-        ContainerName: msg.Actor.Attributes["name"],
-    }
+	message := fmt.Sprintf("%s.%s", msg.Type, msg.Action)
+	cnt := qtypes.ContainerInfo{
+		ImageName:     msg.Actor.Attributes["image"],
+		ContainerID:   msg.ID,
+		ContainerName: msg.Actor.Attributes["name"],
+	}
 	qm := qtypes.Qmsg{
-		Version:       "1.1",
-        Source:        "DockerEvents",
-		Host:          host,
-		Msg:           message,
-		IsContainer:   false,
-        Time:          time.Unix(0, msg.TimeNano),
-        }
-    qm.SetContainer(cnt)
-    qm.Type = fmt.Sprintf("%s.%s", msg.Type, msg.Action)
+		Version:     "1.1",
+		Source:      "DockerEvents",
+		Host:        host,
+		Msg:         message,
+		IsContainer: false,
+		Time:        time.Unix(0, msg.TimeNano),
+	}
+	qm.SetContainer(cnt)
+	qm.Type = fmt.Sprintf("%s.%s", msg.Type, msg.Action)
 	return qm
 }
