@@ -28,6 +28,11 @@ else
     ID=$(uname -s)
 fi
 
+echo "> govendor fetch +missing"
+govendor fetch +missing
+echo "> govendor remove +unused"
+govendor remove +unused
+echo "> govendor sync"
 govendor sync
 
 rm -f ./bin/qwatch_${GIT_TAG}_${ID}
