@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
-    "strconv"
+	"strconv"
 
-    "github.com/spf13/cobra"
+	"github.com/spf13/cobra"
 
 	"github.com/qnib/qwatch/types"
 	"github.com/qnib/qwatch/utils"
@@ -14,9 +14,9 @@ import (
 
 // RunDockerLogCollector start a UDP server to listen for GELF messages (uncompressed)
 func RunDockerLogCollector(cmd *cobra.Command, qChan qtypes.Channels) {
-    port, _ := strconv.Atoi(cmd.Flag("gelf-port").Value.String())
+	port, _ := strconv.Atoi(cmd.Flag("gelf-port").Value.String())
 
-    fmt.Printf("Start DockerLog collector listening on port %d\n", port)
+	fmt.Printf("Start DockerLog collector listening on port %d\n", port)
 	ServerAddr, err := net.ResolveUDPAddr("udp", fmt.Sprintf(":%d", port))
 	utils.CheckError(err)
 
@@ -27,6 +27,9 @@ func RunDockerLogCollector(cmd *cobra.Command, qChan qtypes.Channels) {
 
 	buf := make([]byte, 1024)
 
+	// Join the broadcast group
+	bg := qChan.Log.Join()
+
 	for {
 		n, _, err := ServerConn.ReadFromUDP(buf)
 		if err != nil {
@@ -35,18 +38,18 @@ func RunDockerLogCollector(cmd *cobra.Command, qChan qtypes.Channels) {
 		dat := []byte(buf[0:n])
 		msg := qtypes.GelfMsg{}
 		json.Unmarshal(dat, &msg)
-        qm := qtypes.NewQmsg("DockerLog", msg.Msg, msg.Host)
-        cnt := qtypes.ContainerInfo{
-            ContainerID: msg.ContainerID,
-            ContainerName: msg.ContainerName,
-            Created: msg.Created,
-            ImageID: msg.ImageID,
-            ImageName: msg.ImageName,
-            Command: msg.Command,
-            Tag: msg.Tag,
-        }
-        qm.SetContainer(cnt)
+		qm := qtypes.NewQmsg("DockerLog", msg.Msg, msg.Host)
+		cnt := qtypes.ContainerInfo{
+			ContainerID:   msg.ContainerID,
+			ContainerName: msg.ContainerName,
+			Created:       msg.Created,
+			ImageID:       msg.ImageID,
+			ImageName:     msg.ImageName,
+			Command:       msg.Command,
+			Tag:           msg.Tag,
+		}
+		qm.SetContainer(cnt)
 		qm.Type = "container.stdout"
-		qChan.Log <- qm
+		bg.Send(qm)
 	}
 }
