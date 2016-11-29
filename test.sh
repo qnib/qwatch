@@ -1,7 +1,9 @@
 #!/bin/bash
 
-for x in cmd collectors handlers server types utils;do
-    pushd ${x} >>/dev/null
-    go test -coverprofile=coverage.out
-    popd >>/dev/null
-done
+govendor fetch +missing
+echo "> govendor remove +unused"
+govendor remove +unused
+echo "> govendor sync"
+govendor sync
+
+gocov test ./... || exit 0
