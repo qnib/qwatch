@@ -3,3 +3,4 @@ vendor/golang.org/
 vendor/gopkg.in/
 bin/
 **/coverage.out
+resources/coverity
