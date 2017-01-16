@@ -8,14 +8,14 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/events"
 	"github.com/docker/docker/client"
-	"github.com/spf13/cobra"
+	"github.com/urfave/cli"
 	"golang.org/x/net/context"
 
 	"github.com/qnib/qwatch/types"
 )
 
 // RunDockerEventCollector subscribes to messages and events from the docker-engine
-func RunDockerEventCollector(cmd *cobra.Command, qChan qtypes.Channels) {
+func RunDockerEventCollector(ctx *cli.Context, qChan qtypes.Channels) {
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		panic(err)

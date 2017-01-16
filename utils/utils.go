@@ -6,7 +6,6 @@ import (
 
 	"github.com/grafov/bcast"
 	"github.com/qnib/qwatch/types"
-	"github.com/spf13/cobra"
 )
 
 // CheckError A Simple function to verify error
@@ -17,7 +16,7 @@ func CheckError(err error) {
 }
 
 // NewChannels create an instance of Channels
-func NewChannels(cmd *cobra.Command) qtypes.Channels {
+func NewChannels() qtypes.Channels {
 	//i, _ := strconv.Atoi(cmd.Flag("ticker-interval").Value.String())
 	//interval := time.Duration(i) * time.Millisecond
 	return qtypes.Channels{

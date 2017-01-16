@@ -3,20 +3,19 @@ package qcollect
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net"
-	"strconv"
-
-	"github.com/spf13/cobra"
 
 	"github.com/qnib/qwatch/types"
 	"github.com/qnib/qwatch/utils"
+	"github.com/urfave/cli"
 )
 
 // RunDockerLogCollector start a UDP server to listen for GELF messages (uncompressed)
-func RunDockerLogCollector(cmd *cobra.Command, qChan qtypes.Channels) {
-	port, _ := strconv.Atoi(cmd.Flag("gelf-port").Value.String())
+func RunDockerLogCollector(ctx *cli.Context, qChan qtypes.Channels) {
+	port := ctx.Int("gelf-port")
 
-	fmt.Printf("Start DockerLog collector listening on port %d\n", port)
+	log.Printf("Start DockerLog collector listening on port %d\n", port)
 	ServerAddr, err := net.ResolveUDPAddr("udp", fmt.Sprintf(":%d", port))
 	utils.CheckError(err)
 
