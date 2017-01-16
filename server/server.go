@@ -59,8 +59,8 @@ func ServeQlog(ctx *cli.Context) error {
 			go qoutput.RunLogOutput(ctx, qC)
 		case "elasticsearch":
 			log.Println("Start the elasticsearch handler")
-			//eo := qoutput.NewElasticsearchOutput(ctx, qC)
-			//go eo.RunElasticsearchOutput()
+			eo := qoutput.NewElasticsearchOutput(ctx, qC)
+			go eo.RunElasticsearchOutput()
 		}
 	}
 	// Inserts tick to get Inventory started

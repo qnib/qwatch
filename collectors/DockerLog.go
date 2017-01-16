@@ -30,7 +30,6 @@ func RunDockerLogCollector(ctx *cli.Context, qChan qtypes.Channels) {
 	bg := qChan.Log.Join()
 
 	for {
-		log.Println("huhu")
 		n, _, err := ServerConn.ReadFromUDP(buf)
 		if err != nil {
 			fmt.Println("Error: ", err)

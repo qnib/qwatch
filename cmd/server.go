@@ -17,7 +17,7 @@ var ServerCmd = cli.Command{
 		},
 		cli.StringFlag{
 			Name:  "handlers",
-			Value: "Log",
+			Value: "log",
 			Usage: "Comma separated list of handlers to start",
 		},
 		cli.IntFlag{
@@ -29,6 +29,16 @@ var ServerCmd = cli.Command{
 			Name:  "gelf-port",
 			Value: 12201,
 			Usage: "UDP port of GELF collector",
+		},
+		cli.StringFlag{
+			Name:  "es-host",
+			Value: "localhost",
+			Usage: "Elasticsearch host to connect the ES output to",
+		},
+		cli.IntFlag{
+			Name:  "es-port",
+			Value: 9200,
+			Usage: "Elasticsearch port to connect the ES output to",
 		},
 	},
 	Action: func(c *cli.Context) error {
