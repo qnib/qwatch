@@ -35,7 +35,7 @@ govendor remove +unused
 echo "> govendor sync"
 govendor sync
 
-rm -f ./bin/qinventory_${GIT_TAG}_${ID}
-go build -o ./bin/qinventory_${GIT_TAG}_${ID}
-rm -f ./bin/qinventory_${ID}
-cp ./bin/qinventory_${GIT_TAG}_${ID} ./bin/qinventory_${ID}
+rm -f ./bin/qwatch_${GIT_TAG}_${ID}
+go build -o ./bin/qwatch_${GIT_TAG}_${ID}
+rm -f ./bin/qwatch_${ID}
+cp ./bin/qwatch_${GIT_TAG}_${ID} ./bin/qwatch_${ID}
