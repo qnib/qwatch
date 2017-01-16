@@ -11,9 +11,14 @@ var ServerCmd = cli.Command{
 	Usage: "Starts daemon to run framework",
 	Flags: []cli.Flag{
 		cli.StringFlag{
-			Name:  "collectors,c",
-			Value: "Gelf,DockerEvents",
+			Name:  "collectors",
+			Value: "gelf,docker-events",
 			Usage: "Comma separated list of collectors to start",
+		},
+		cli.StringFlag{
+			Name:  "handlers",
+			Value: "Log",
+			Usage: "Comma separated list of handlers to start",
 		},
 		cli.IntFlag{
 			Name:  "ticker-interval",
