@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/qnib/qwatch/types"
-	"github.com/spf13/cobra"
+	"github.com/urfave/cli"
 
 	"github.com/OwnLocal/goes"
 )
@@ -21,15 +21,15 @@ var (
 // ElasticsearchOutput holds a buffer and the initial information from the server
 type ElasticsearchOutput struct {
 	buffer chan qtypes.Qmsg
-	cmd    *cobra.Command
+	ctx    *cli.Context
 	qChan  qtypes.Channels
 }
 
 // NewElasticsearchOutput returns an initial instance
-func NewElasticsearchOutput(cmd *cobra.Command, qC qtypes.Channels) ElasticsearchOutput {
+func NewElasticsearchOutput(ctx *cli.Context, qC qtypes.Channels) ElasticsearchOutput {
 	return ElasticsearchOutput{
 		buffer: make(chan qtypes.Qmsg, 1000),
-		cmd:    cmd,
+		ctx:    ctx,
 		qChan:  qC,
 	}
 }
@@ -46,8 +46,8 @@ func (eo *ElasticsearchOutput) pushToBuffer() {
 	}
 }
 
-func createESClient() (conn *goes.Connection) {
-	conn = goes.NewConnection("localhost", "9200")
+func (eo *ElasticsearchOutput) createESClient() (conn *goes.Connection) {
+	conn = goes.NewConnection(eo.ctx.String("es-host"), eo.ctx.String("es-port"))
 	return
 }
 
@@ -101,7 +101,7 @@ func indexLog(conn *goes.Connection, log qtypes.Qmsg) error {
 // RunElasticsearchOutput pushes the logs to elasticsearch
 func (eo *ElasticsearchOutput) RunElasticsearchOutput() {
 	go eo.pushToBuffer()
-	conn := createESClient()
+	conn := eo.createESClient()
 	createIndex(conn)
 	for {
 		log := <-eo.buffer

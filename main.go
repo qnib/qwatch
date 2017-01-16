@@ -14,8 +14,19 @@
 
 package main
 
-import "github.com/qnib/qwatch/cmd"
+import (
+	"os"
+
+	"github.com/qnib/qwatch/cmd"
+	"github.com/urfave/cli"
+)
 
 func main() {
-	cmd.Execute()
+	app := cli.NewApp()
+	app.Name = "qwatch"
+	app.Usage = ""
+	app.Version = "0.6.0"
+	app.Commands = []cli.Command{cmd.ServerCmd}
+	app.Run(os.Args)
+
 }

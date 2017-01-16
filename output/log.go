@@ -4,11 +4,11 @@ import (
 	"fmt"
 
 	"github.com/qnib/qwatch/types"
-	"github.com/spf13/cobra"
+	"github.com/urfave/cli"
 )
 
 // RunLogOutput prints the logs to stdout
-func RunLogOutput(cmd *cobra.Command, qC qtypes.Channels) {
+func RunLogOutput(ctx *cli.Context, qC qtypes.Channels) {
 	bg := qC.Log.Join()
 	for {
 		select {
