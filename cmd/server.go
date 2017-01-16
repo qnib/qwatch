@@ -2,25 +2,31 @@ package cmd
 
 import (
 	"github.com/qnib/qwatch/server"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
+	"github.com/urfave/cli"
 )
 
-// watchSrv loops over nodes, services and tasks
-var qServer = &cobra.Command{
-	Use:   "server",
-	Short: "Starts server daemon",
-	Long:  ``,
-	Run:   qserver.ServeQlog,
-}
-
-func init() {
-	RootCmd.AddCommand(qServer)
-
-	RootCmd.PersistentFlags().String("collectors", "Gelf,DockerEvents", "Comma separated list of collectors to start")
-	viper.BindPFlag("collectors", RootCmd.PersistentFlags().Lookup("collectors"))
-	RootCmd.PersistentFlags().Int("ticker-interval", 15000, "Interval of global ticker in milliseconds")
-	viper.BindPFlag("ticker-interval", RootCmd.PersistentFlags().Lookup("ticker-interval"))
-	RootCmd.PersistentFlags().Int("gelf-port", 12201, "UDP port of GELF collector")
-	viper.BindPFlag("gelf-port", RootCmd.PersistentFlags().Lookup("gelf-port"))
+// SeverCmd provides the flags and the execution
+var ServerCmd = cli.Command{
+	Name:  "server",
+	Usage: "Starts daemon to run framework",
+	Flags: []cli.Flag{
+		cli.StringFlag{
+			Name:  "collectors,c",
+			Value: "Gelf,DockerEvents",
+			Usage: "Comma separated list of collectors to start",
+		},
+		cli.IntFlag{
+			Name:  "ticker-interval",
+			Value: 15000,
+			Usage: "Interval of global ticker in milliseconds",
+		},
+		cli.IntFlag{
+			Name:  "gelf-port",
+			Value: 12201,
+			Usage: "UDP port of GELF collector",
+		},
+	},
+	Action: func(c *cli.Context) error {
+		return qserver.ServeQlog(c)
+	},
 }
