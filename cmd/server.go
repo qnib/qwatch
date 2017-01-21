@@ -2,7 +2,8 @@ package cmd
 
 import (
 	"github.com/qnib/qwatch/server"
-	"github.com/urfave/cli"
+	//"github.com/urfave/cli"
+    "github.com/codegangsta/cli"
 )
 
 // SeverCmd provides the flags and the execution
@@ -11,9 +12,14 @@ var ServerCmd = cli.Command{
 	Usage: "Starts daemon to run framework",
 	Flags: []cli.Flag{
 		cli.StringFlag{
+			Name:  "config",
+			Value: "qwatch.yml",
+			Usage: "Config file, will overwrite flag default if present.",
+		},
+        cli.StringFlag{
 			Name:  "collectors",
-			Value: "gelf,docker-events",
-			Usage: "Comma separated list of collectors to start",
+			Value: "gelf",
+			Usage: "Comma separated list of handlers to start",
 		},
 		cli.StringFlag{
 			Name:  "handlers",

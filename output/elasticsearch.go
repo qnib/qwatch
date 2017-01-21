@@ -6,8 +6,7 @@ import (
 	"time"
 
 	"github.com/qnib/qwatch/types"
-	"github.com/urfave/cli"
-
+    "github.com/codegangsta/cli"
 	"github.com/OwnLocal/goes"
 )
 

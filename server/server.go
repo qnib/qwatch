@@ -1,24 +1,32 @@
 package qserver
 
 import (
-	"fmt"
+    "fmt"
 	"log"
 	"os"
 	"os/signal"
 	"strings"
 	"time"
 
-	"github.com/qnib/qwatch/collectors"
+    "github.com/zpatrick/go-config"
+    "github.com/qnib/qwatch/collectors"
 	"github.com/qnib/qwatch/output"
 	"github.com/qnib/qwatch/utils"
+    "github.com/codegangsta/cli"
 
-	"github.com/urfave/cli"
 )
 
 // ServeQlog start daemon
 func ServeQlog(ctx *cli.Context) error {
+    cfo := utils.NewQGraph()
+    conf := config.NewConfig([]config.Provider{})
+    if _, err := os.Stat(ctx.String("config")); err == nil {
+        log.Printf("[II] Use config file: %s", ctx.String("config"))
+        conf.Providers = append(conf.Providers, config.NewYAMLFile(ctx.String("config")))
+    }
+    conf.Providers = append(conf.Providers, config.NewCLI(ctx, false))
 	qC := utils.NewChannels()
-	i := ctx.Int("ticker-interval")
+	i, _ := conf.Int("server.ticker-interval")
 	interval := time.Duration(i) * time.Millisecond
 	ticker := time.NewTicker(interval).C
 
@@ -30,7 +38,9 @@ func ServeQlog(ctx *cli.Context) error {
 	signal.Notify(qC.Done, os.Interrupt)
 
 	// Collectors
-	for _, c := range strings.Split(ctx.String("collectors"), ",") {
+    col, _ := conf.String("collectors")
+	for _, c := range strings.Split(col, ",") {
+        cfo.AddCollector(c)
 		switch c {
 		case "gelf":
 			log.Println("Start the GELF DockerLog collector")
@@ -52,8 +62,9 @@ func ServeQlog(ctx *cli.Context) error {
 	*/
 
 	// Handler
-	for _, c := range strings.Split(ctx.String("handlers"), ",") {
-		switch c {
+	for _, h := range strings.Split(ctx.String("handlers"), ",") {
+        cfo.AddOutput(h,[]string{"gelf"})
+        switch h {
 		case "log":
 			log.Println("Start the log handler")
 			go qoutput.RunLogOutput(ctx, qC)
@@ -63,6 +74,7 @@ func ServeQlog(ctx *cli.Context) error {
 			go eo.RunElasticsearchOutput()
 		}
 	}
+    cfo.PrintGraph()
 	// Inserts tick to get Inventory started
 	qC.Tick.Send(0)
 	for {
@@ -72,6 +84,7 @@ func ServeQlog(ctx *cli.Context) error {
 			return nil
 		case <-ticker:
 			qC.Tick.Send(0)
+            return nil
 		}
 	}
 	return nil

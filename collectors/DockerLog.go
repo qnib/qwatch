@@ -8,7 +8,7 @@ import (
 
 	"github.com/qnib/qwatch/types"
 	"github.com/qnib/qwatch/utils"
-	"github.com/urfave/cli"
+    "github.com/codegangsta/cli"
 )
 
 // RunDockerLogCollector start a UDP server to listen for GELF messages (uncompressed)

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/qnib/qwatch/types"
-	"github.com/urfave/cli"
+    "github.com/codegangsta/cli"
 )
 
 // RunLogOutput prints the logs to stdout

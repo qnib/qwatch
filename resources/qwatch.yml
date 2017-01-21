@@ -1,0 +1,4 @@
+server:
+    ticker-interval: 1000
+collectors: "gelf,docker-events"
+handlers: "log,elasticsearch"

@@ -8,7 +8,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/events"
 	"github.com/docker/docker/client"
-	"github.com/urfave/cli"
+    "github.com/codegangsta/cli"
 	"golang.org/x/net/context"
 
 	"github.com/qnib/qwatch/types"
