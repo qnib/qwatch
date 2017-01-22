@@ -1,4 +1,4 @@
-package qcollect
+package qinput
 
 import (
 	"fmt"
@@ -8,21 +8,32 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/events"
 	"github.com/docker/docker/client"
-	"github.com/urfave/cli"
 	"golang.org/x/net/context"
+    "github.com/zpatrick/go-config"
 
 	"github.com/qnib/qwatch/types"
 )
+// DockerEvents is a simple qworker
+type DockerEvents struct {
+    qtypes.QWorker
+}
 
-// RunDockerEventCollector subscribes to messages and events from the docker-engine
-func RunDockerEventCollector(ctx *cli.Context, qChan qtypes.Channels) {
+// NewDockerEvents returns instance of DockerEventInput
+func NewDockerEvents(cfg *config.Config, qC qtypes.Channels) DockerEvents {
+    de := DockerEvents{}
+    de.Cfg = cfg
+    de.QChan = qC
+    return de
+}
+// Run subscribes to messages and events from the docker-engine
+func (de DockerEvents) Run() {
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		panic(err)
 	}
 
 	msgs, errs := cli.Events(context.Background(), types.EventsOptions{})
-	bg := qChan.Log.Join()
+	bg := de.QChan.Log.Join()
 	for {
 		select {
 		case dMsg := <-msgs:
@@ -48,7 +59,7 @@ func parseMessage(msg events.Message) qtypes.Qmsg {
 	}
 	qm := qtypes.Qmsg{
 		Version:     "1.1",
-		Source:      "DockerEvents",
+		Source:      "docker-events",
 		Host:        host,
 		Msg:         message,
 		IsContainer: false,
