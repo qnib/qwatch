@@ -3,13 +3,17 @@ workspace:
   path: src/github.com/qnib/qwatch
 
 pipeline:
-  unit-test:
+  test:
     image: qnib/golang
     pull: true
     commands:
      - ./test.sh
     environment:
      - GOPATH=/drone/
+  slack:
+    image: plugins/slack
+    channel: drone
+    username: drone
 # publish:
 #    image: plugins/coverage
 #      server: http://wins.ddns.net:8008
