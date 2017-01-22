@@ -5,6 +5,7 @@ workspace:
 pipeline:
   unit-test:
     image: qnib/golang
+    pull: true
     commands:
      - ./test.sh
     environment:
