@@ -4,7 +4,7 @@ workspace:
 
 pipeline:
   unit-test:
-    image: qnib/golang:1.7
+    image: qnib/golang
     commands:
      - ./test.sh
     environment:
