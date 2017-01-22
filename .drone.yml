@@ -17,9 +17,9 @@ pipeline:
     username: drone
     when:
       status: [ success, failure ]
-  publish:
-    image: plugins/coverage
-    server: http://wins.ddns.net:8008
+#  publish:
+#    image: plugins/coverage
+#    server: http://wins.ddns.net:8008
 #    github_release:
 #      api_key: $$GITHUB_API_KEY
 #      files: bin/drone/*
