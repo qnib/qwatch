@@ -3,7 +3,7 @@ package utils_test
 import (
     "testing"
 
-    "github.com/twmb/algoimpl/go/graph"
+    "github.com/qnib/algoimpl/go/graph"
     "github.com/qnib/qwatch/utils"
     "github.com/stretchr/testify/assert"
 
@@ -13,7 +13,7 @@ import (
 // NewQGraph returns a initial graph
 func TestNewQGraph(t *testing.T) {
     exp := utils.QGraph{
-        Collectors: make(map[string]graph.Node, 0),
+        Inputs: make(map[string]graph.Node, 0),
         Filters: make(map[string]graph.Node, 0),
         Outputs: make(map[string]graph.Node, 0),
         Graph: graph.New(graph.Directed),
