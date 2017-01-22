@@ -43,3 +43,5 @@ pipeline:
     image: plugins/github-release
     files: bin/drone/*
     checksum: sha1
+    when:
+        event: "tag"
