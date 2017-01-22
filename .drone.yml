@@ -39,10 +39,10 @@ pipeline:
 #  publish:
 #    image: plugins/coverage
 #    server: http://wins.ddns.net:8008
-  release:
-    image: plugins/github-release
-    files: bin/drone/*
-    checksum: sha1
-    api-key: $$GITHUB_TOKEN
-    when:
-        event: "tag"
+#  release:
+#    image: plugins/github-release
+#    files: bin/drone/*
+#    checksum: sha1
+#    api-key: $$GITHUB_TOKEN
+#    when:
+#        event: "tag"
