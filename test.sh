@@ -8,6 +8,8 @@ set -e
 #govendor fetch +missing
 #echo "> govendor update +local"
 #govendor update +local
+echo "> go get github.com/stretchr/testify/assert"
+go get github.com/stretchr/testify/assert
 echo "> go get -d"
 go get -d
 if [ ! -d resources/coverity ];then
