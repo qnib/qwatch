@@ -7,8 +7,8 @@ pipeline:
     image: qnib/golang
     pull: true
     commands:
-     - go version
-     - bash -x ./test.sh
+     - git clone -b v2 https://github.com/go-yaml/yaml.git /drone/src/gopkg.in/yaml.v2
+     - ./test.sh
     environment:
      - GOPATH=/drone/
   slack:
