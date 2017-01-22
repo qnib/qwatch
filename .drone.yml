@@ -3,6 +3,9 @@ workspace:
   path: src/github.com/qnib/qwatch
 
 pipeline:
+  clone:
+    image: plugins/git
+    tags: true
   test:
     image: qnib/golang
     pull: true
