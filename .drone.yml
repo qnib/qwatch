@@ -40,6 +40,6 @@ pipeline:
 #    image: plugins/coverage
 #    server: http://wins.ddns.net:8008
   release:
-    image: plugin/github-release
+    image: plugins/github-release
     files: bin/drone/*
     checksum: sha1
