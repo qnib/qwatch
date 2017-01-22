@@ -19,6 +19,15 @@ pipeline:
      - ls -ltr bin/
     environment:
      - GOPATH=/drone/
+  build-linux:
+    image: qnib/alpn-go-dev:1.7
+    pull: true
+    commands:
+     - git clone -b v2 https://github.com/go-yaml/yaml.git /drone/src/gopkg.in/yaml.v2
+     - ./build.sh
+     - ls -ltr bin/
+    environment:
+     - GOPATH=/drone/
   slack:
     image: plugins/slack
     channel: drone
