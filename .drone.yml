@@ -11,6 +11,14 @@ pipeline:
      - ./test.sh
     environment:
      - GOPATH=/drone/
+  build-linux:
+    image: qnib/golang
+    pull: true
+    commands:
+     - ./build.sh
+     - ls -ltr bin/
+    environment:
+     - GOPATH=/drone/
   slack:
     image: plugins/slack
     channel: drone
