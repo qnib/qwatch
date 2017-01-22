@@ -1,24 +1,34 @@
 package qserver
 
 import (
-	"fmt"
+    "fmt"
 	"log"
 	"os"
 	"os/signal"
 	"strings"
 	"time"
 
-	"github.com/qnib/qwatch/collectors"
-	"github.com/qnib/qwatch/output"
-	"github.com/qnib/qwatch/utils"
+    "github.com/codegangsta/cli"
+    "github.com/zpatrick/go-config"
 
-	"github.com/urfave/cli"
+    "github.com/qnib/qwatch/inputs"
+	"github.com/qnib/qwatch/outputs"
+	"github.com/qnib/qwatch/utils"
+    "github.com/qnib/qwatch/types"
+
 )
 
 // ServeQlog start daemon
 func ServeQlog(ctx *cli.Context) error {
+    //cfo := utils.NewQGraph()
+    cfg := config.NewConfig([]config.Provider{})
+    if _, err := os.Stat(ctx.String("config")); err == nil {
+        log.Printf("[II] Use config file: %s", ctx.String("config"))
+        cfg.Providers = append(cfg.Providers, config.NewYAMLFile(ctx.String("config")))
+    }
+    cfg.Providers = append(cfg.Providers, config.NewCLI(ctx, false))
 	qC := utils.NewChannels()
-	i := ctx.Int("ticker-interval")
+	i, _ := cfg.Int("ticker.interval")
 	interval := time.Duration(i) * time.Millisecond
 	ticker := time.NewTicker(interval).C
 
@@ -29,20 +39,20 @@ func ServeQlog(ctx *cli.Context) error {
 	// fetches interrupt and closes
 	signal.Notify(qC.Done, os.Interrupt)
 
-	// Collectors
-	for _, c := range strings.Split(ctx.String("collectors"), ",") {
-		switch c {
-		case "gelf":
-			log.Println("Start the GELF DockerLog collector")
-			go qcollect.RunDockerLogCollector(ctx, qC)
+	// Inputs
+    inputs, _ := cfg.String("inputs")
+	for _, ins := range strings.Split(inputs, ",") {
+        //cfo.AddInput(ins)
+        var qw qtypes.QWorkers
+		switch ins {
+		case "docker-gelf":
+			log.Println("Start the docker-gelf input")
+			qw = qinput.NewDockerGelf(cfg, qC)
 		case "docker-events":
 			log.Println("Start the DockerEvents collector")
-			go qcollect.RunDockerEventCollector(ctx, qC)
-		case "docker-inventory":
-			log.Println("Start the DockerInventory collector")
-			//dc := qcollect.NewDockerInventoryCollector(ctx, qC)
-			//go dc.RunDockerInventoryCollector()
+			qw = qinput.NewDockerEvents(cfg, qC)
 		}
+        go qw.Run()
 	}
 
 	// Filter
@@ -51,18 +61,23 @@ func ServeQlog(ctx *cli.Context) error {
 			go io.Run()
 	*/
 
-	// Handler
-	for _, c := range strings.Split(ctx.String("handlers"), ",") {
-		switch c {
+	// Outputs
+    outputs, _ := cfg.String("outputs")
+    // TODO: iterate over keys in config output:
+	for _, outs := range strings.Split(outputs, ",") {
+        //cfo.AddOutput(h,[]string{"gelf"})
+        var qw qtypes.QWorkers
+        switch outs {
 		case "log":
 			log.Println("Start the log handler")
-			go qoutput.RunLogOutput(ctx, qC)
+			qw = qoutput.NewLog(cfg, qC)
 		case "elasticsearch":
 			log.Println("Start the elasticsearch handler")
-			eo := qoutput.NewElasticsearchOutput(ctx, qC)
-			go eo.RunElasticsearchOutput()
+			qw = qoutput.NewElasticsearch(cfg, qC)
 		}
+        go qw.Run()
 	}
+    //cfo.PrintGraph()
 	// Inserts tick to get Inventory started
 	qC.Tick.Send(0)
 	for {

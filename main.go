@@ -18,7 +18,7 @@ import (
 	"os"
 
 	"github.com/qnib/qwatch/cmd"
-	"github.com/urfave/cli"
+    "github.com/codegangsta/cli"
 )
 
 func main() {
