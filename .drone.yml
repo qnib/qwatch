@@ -3,16 +3,16 @@ workspace:
   path: src/github.com/qnib/qwatch
 
 pipeline:
- unit-test:
+  unit-test:
     image: qnib/golang:1.7
     commands:
      - ./test.sh
     environment:
      - GOPATH=/drone/
- publish:
-    image: plugins/coverage 
-      server: http://wins.ddns.net:8008
-      token: $$GITHUB_API_KEY
+# publish:
+#    image: plugins/coverage
+#      server: http://wins.ddns.net:8008
+#      token: $$GITHUB_API_KEY
 #    github_release:
 #      api_key: $$GITHUB_API_KEY
 #      files: bin/drone/*
