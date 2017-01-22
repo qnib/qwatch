@@ -1,21 +1,37 @@
-package qcollect
+package qinput
 
 import (
 	"encoding/json"
 	"fmt"
 	"log"
 	"net"
+    "github.com/zpatrick/go-config"
 
 	"github.com/qnib/qwatch/types"
 	"github.com/qnib/qwatch/utils"
-    "github.com/codegangsta/cli"
 )
 
-// RunDockerLogCollector start a UDP server to listen for GELF messages (uncompressed)
-func RunDockerLogCollector(ctx *cli.Context, qChan qtypes.Channels) {
-	port := ctx.Int("gelf-port")
+// DockerGelf is a simple qworker
+type DockerGelf struct {
+    qtypes.QWorker
+}
 
-	log.Printf("Start DockerLog collector listening on port %d\n", port)
+// NewDockerGelf returns instance of DockerEventInput
+func NewDockerGelf(cfg *config.Config, qC qtypes.Channels) DockerGelf {
+    dg := DockerGelf{}
+    dg.Cfg = cfg
+    dg.QChan = qC
+    return dg
+}
+
+// Run start a UDP server to listen for GELF messages (uncompressed)
+func (dg DockerGelf) Run() {
+	port, err := dg.Cfg.Int("input.docker-gelf.port")
+    if err != nil {
+        panic(err)
+    }
+
+	log.Printf("Start DockerGelf input listening on port %d\n", port)
 	ServerAddr, err := net.ResolveUDPAddr("udp", fmt.Sprintf(":%d", port))
 	utils.CheckError(err)
 
@@ -27,17 +43,17 @@ func RunDockerLogCollector(ctx *cli.Context, qChan qtypes.Channels) {
 	buf := make([]byte, 1024)
 
 	// Join the broadcast group
-	bg := qChan.Log.Join()
+	bg := dg.QChan.Log.Join()
 
 	for {
 		n, _, err := ServerConn.ReadFromUDP(buf)
 		if err != nil {
-			fmt.Println("Error: ", err)
+			log.Println("Error: ", err)
 		}
 		dat := []byte(buf[0:n])
 		msg := qtypes.GelfMsg{}
 		json.Unmarshal(dat, &msg)
-		qm := qtypes.NewQmsg("DockerLog", msg.Msg, msg.Host)
+		qm := qtypes.NewQmsg("docker-gelf", msg.Msg, msg.Host)
 		cnt := qtypes.ContainerInfo{
 			ContainerID:   msg.ContainerID,
 			ContainerName: msg.ContainerName,

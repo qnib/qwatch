@@ -1,41 +1,36 @@
 package qoutput
 
 import (
-	//"fmt"
 	"net/url"
 	"time"
+    "github.com/zpatrick/go-config"
+    "github.com/deckarep/golang-set"
 
 	"github.com/qnib/qwatch/types"
-    "github.com/codegangsta/cli"
 	"github.com/OwnLocal/goes"
 )
 
-var (
-	// EsHost to connect
-	EsHost = "localhost"
-	// EsPort to connect
-	EsPort = "9200"
-)
-
-// ElasticsearchOutput holds a buffer and the initial information from the server
-type ElasticsearchOutput struct {
-	buffer chan qtypes.Qmsg
-	ctx    *cli.Context
-	qChan  qtypes.Channels
+// Elasticsearch holds a buffer and the initial information from the server
+type Elasticsearch struct {
+    qtypes.QWorker
+    buffer chan qtypes.Qmsg
 }
 
-// NewElasticsearchOutput returns an initial instance
-func NewElasticsearchOutput(ctx *cli.Context, qC qtypes.Channels) ElasticsearchOutput {
-	return ElasticsearchOutput{
+// NewElasticsearch returns an initial instance
+func NewElasticsearch(cfg *config.Config, qC qtypes.Channels) Elasticsearch {
+    subs := mapset.NewSet()
+    es := Elasticsearch{
 		buffer: make(chan qtypes.Qmsg, 1000),
-		ctx:    ctx,
-		qChan:  qC,
-	}
+    }
+	es.Cfg = cfg
+    es.QChan = qC
+    es.Subs = subs
+    return es
 }
 
 // Takes log from framework and buffers it in elasticsearch buffer
-func (eo *ElasticsearchOutput) pushToBuffer() {
-	bg := eo.qChan.Log.Join()
+func (eo *Elasticsearch) pushToBuffer() {
+	bg := eo.QChan.Log.Join()
 	for {
 		select {
 		case val := <-bg.In:
@@ -45,8 +40,16 @@ func (eo *ElasticsearchOutput) pushToBuffer() {
 	}
 }
 
-func (eo *ElasticsearchOutput) createESClient() (conn *goes.Connection) {
-	conn = goes.NewConnection(eo.ctx.String("es-host"), eo.ctx.String("es-port"))
+func (eo *Elasticsearch) createESClient() (conn *goes.Connection) {
+    host, err := eo.Cfg.String("output.elasticsearch.host")
+    if err != nil {
+        panic(err)
+    }
+    port, err := eo.Cfg.String("output.elasticsearch.port")
+    if err != nil {
+        panic(err)
+    }
+    conn = goes.NewConnection(host, port)
 	return
 }
 
@@ -97,8 +100,8 @@ func indexLog(conn *goes.Connection, log qtypes.Qmsg) error {
 	return err
 }
 
-// RunElasticsearchOutput pushes the logs to elasticsearch
-func (eo *ElasticsearchOutput) RunElasticsearchOutput() {
+// Run pushes the logs to elasticsearch
+func (eo Elasticsearch) Run() {
 	go eo.pushToBuffer()
 	conn := eo.createESClient()
 	createIndex(conn)

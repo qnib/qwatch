@@ -1,4 +1,8 @@
-server:
-    ticker-interval: 1000
-collectors: "gelf,docker-events"
+ticker:
+    interval: 15000
+inputs: "docker-gelf,docker-events"
 handlers: "log,elasticsearch"
+input:
+    docker-gelf:
+        port: 12201
+        host: 0.0.0.0

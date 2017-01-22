@@ -102,6 +102,12 @@
 			"revisionTime": "2016-05-04T13:01:55Z"
 		},
 		{
+			"checksumSHA1": "xfgP1l6KQ2oSDvk+vdUpUw5V5i0=",
+			"path": "github.com/deckarep/golang-set",
+			"revision": "0c62f01318f81fb34e5ea393d2ec62141e9715e9",
+			"revisionTime": "2016-12-13T18:45:00Z"
+		},
+		{
 			"checksumSHA1": "f1wARLDzsF/JoyN01yoxXEwFIp8=",
 			"origin": "github.com/docker/docker/vendor/github.com/docker/distribution/digest",
 			"path": "github.com/docker/distribution/digest",
@@ -373,44 +379,56 @@
 		{
 			"checksumSHA1": "eU54Rn+Y0SuIjHPgY8WrNs2Nb8M=",
 			"path": "github.com/qnib/qwatch",
-			"revision": "eb453aae0a7c45dcea64b69ed2a8b359d3a7950f",
-			"revisionTime": "2017-01-16T11:32:25Z"
+			"revision": "723c5aee5914ec966f606937c3ba9125d0e52785",
+			"revisionTime": "2017-01-21T17:44:59Z"
 		},
 		{
-			"checksumSHA1": "QVgRGHbLdU9ZATZk/ckb/eQRUOk=",
+			"checksumSHA1": "KPDcFuOkx0HbX6s1aB08gO9Km80=",
+			"path": "github.com/qnib/qwatch/archive",
+			"revision": "723c5aee5914ec966f606937c3ba9125d0e52785",
+			"revisionTime": "2017-01-21T17:44:59Z"
+		},
+		{
+			"checksumSHA1": "wzTE2EOEfhMtRNNlucKhabpg4zs=",
 			"path": "github.com/qnib/qwatch/cmd",
-			"revision": "eb453aae0a7c45dcea64b69ed2a8b359d3a7950f",
-			"revisionTime": "2017-01-16T11:32:25Z"
+			"revision": "723c5aee5914ec966f606937c3ba9125d0e52785",
+			"revisionTime": "2017-01-21T17:44:59Z"
 		},
 		{
-			"checksumSHA1": "qJlm1v4ESk8GmQtswA3TuJSfhgA=",
-			"path": "github.com/qnib/qwatch/collectors",
-			"revision": "eb453aae0a7c45dcea64b69ed2a8b359d3a7950f",
-			"revisionTime": "2017-01-16T11:32:25Z"
+			"checksumSHA1": "aZUNBzOmSn0o/S5zx8hCRcjlVZo=",
+			"path": "github.com/qnib/qwatch/inputs",
+			"revision": "723c5aee5914ec966f606937c3ba9125d0e52785",
+			"revisionTime": "2017-01-21T17:44:59Z"
 		},
 		{
-			"checksumSHA1": "oWQMeerjEiAxdxktQJQVP/FDcvo=",
+			"checksumSHA1": "rXB//zSQN+VkL8iFjT74uEycHf0=",
 			"path": "github.com/qnib/qwatch/output",
-			"revision": "eb453aae0a7c45dcea64b69ed2a8b359d3a7950f",
-			"revisionTime": "2017-01-16T11:32:25Z"
+			"revision": "723c5aee5914ec966f606937c3ba9125d0e52785",
+			"revisionTime": "2017-01-21T17:44:59Z"
 		},
 		{
-			"checksumSHA1": "h4FeAE96u1y+41XTwE12pq5+wFA=",
+			"checksumSHA1": "e8wgOldUqH3l3yMAY0W3sg/ZEXc=",
+			"path": "github.com/qnib/qwatch/outputs",
+			"revision": "723c5aee5914ec966f606937c3ba9125d0e52785",
+			"revisionTime": "2017-01-21T17:44:59Z"
+		},
+		{
+			"checksumSHA1": "p5PWULZqegQs6QCnaQ5wx2OJkik=",
 			"path": "github.com/qnib/qwatch/server",
-			"revision": "eb453aae0a7c45dcea64b69ed2a8b359d3a7950f",
-			"revisionTime": "2017-01-16T11:32:25Z"
+			"revision": "723c5aee5914ec966f606937c3ba9125d0e52785",
+			"revisionTime": "2017-01-21T17:44:59Z"
 		},
 		{
-			"checksumSHA1": "QpqaKd3vgacCI1DDZC9QXZa/R1k=",
+			"checksumSHA1": "45h+ZQU7yfxQDSaG0jYsWe0rhdo=",
 			"path": "github.com/qnib/qwatch/types",
-			"revision": "eb453aae0a7c45dcea64b69ed2a8b359d3a7950f",
-			"revisionTime": "2017-01-16T11:32:25Z"
+			"revision": "723c5aee5914ec966f606937c3ba9125d0e52785",
+			"revisionTime": "2017-01-21T17:44:59Z"
 		},
 		{
-			"checksumSHA1": "hiof9k9415iTk8hXdkTr0jxB0bA=",
+			"checksumSHA1": "e1deR1qvtFwmEQznBlyPwT/CFwM=",
 			"path": "github.com/qnib/qwatch/utils",
-			"revision": "eb453aae0a7c45dcea64b69ed2a8b359d3a7950f",
-			"revisionTime": "2017-01-16T11:32:25Z"
+			"revision": "723c5aee5914ec966f606937c3ba9125d0e52785",
+			"revisionTime": "2017-01-21T17:44:59Z"
 		},
 		{
 			"checksumSHA1": "E1899TNqCHhCtr6+joW4YEldRuE=",
@@ -461,12 +479,6 @@
 			"revisionTime": "2013-09-27T17:23:13Z"
 		},
 		{
-			"checksumSHA1": "7cxwOBG3z8bcqlACknqxIV+jB/o=",
-			"path": "github.com/urfave/cli",
-			"revision": "f1be59ff3d239f0942b201619030d302bce912cc",
-			"revisionTime": "2016-11-19T21:37:11Z"
-		},
-		{
 			"checksumSHA1": "m8hYD/alsufIYIM7sR06wbL+dKo=",
 			"path": "github.com/zpatrick/go-config",
 			"revision": "710646a45582fde23bf77bacbc2f38008dc7ffc2",
@@ -506,12 +518,6 @@
 			"path": "golang.org/x/sys/windows",
 			"revision": "88a45c4a1bd7bcf6a0bc4eab9a6b4bd7ddae67be",
 			"revisionTime": "2016-11-17T19:08:33Z"
-		},
-		{
-			"checksumSHA1": "brhONOPp4CSdTZf5uEtcH+FpFUI=",
-			"path": "gopkg.in/urfave/cli.v1",
-			"revision": "0bdeddeeb0f650497d603c4ad7b20cfe685682f6",
-			"revisionTime": "2016-11-22T04:36:10Z"
 		},
 		{
 			"checksumSHA1": "KgT+peLCcuh0/m2mpoOZXuxXmwc=",
