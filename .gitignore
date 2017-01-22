@@ -4,3 +4,4 @@ vendor/gopkg.in/
 bin/
 **/coverage.out
 resources/coverity
+resources/archive
