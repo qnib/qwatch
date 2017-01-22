@@ -8,7 +8,6 @@ pipeline:
     pull: true
     commands:
      - git clone -b v2 https://github.com/go-yaml/yaml.git /drone/src/gopkg.in/yaml.v2
-     - git clone -b v2 https://github.com/go-yaml/yaml.git /drone/.cache/govendor/gopkg.in/yaml.v2
      - ./test.sh
     environment:
      - GOPATH=/drone/
