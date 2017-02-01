@@ -17,6 +17,12 @@ type Channels struct {
 	Done      chan os.Signal
 }
 
+// ImageInfo holds information about a docker image
+type ImageInfo struct {
+	Name string `json:"_name"`
+	ID   string `json:"_image_id"`
+}
+
 // ContainerInfo holds information when the message was emmited by a container
 type ContainerInfo struct {
 	Command       string `json:"_command"`
@@ -38,6 +44,7 @@ func (ci *ContainerInfo) GetCntInfo() string {
 type Qmsg struct {
 	Version     string        `json:"version"`
 	Type        string        `json:"type"`
+	Action      string        `json:"action"`
 	Source      string        `json:"source"`
 	Host        string        `json:"host"`
 	Msg         string        `json:"short_message"`
@@ -45,6 +52,7 @@ type Qmsg struct {
 	Level       int           `json:"level"`
 	IsContainer bool          `json:"is_container"`
 	Container   ContainerInfo `json:"container"`
+	Image       ImageInfo     `json:"container"`
 }
 
 // GetCntInfo returns container info if a container is involved, an empty string otherwise
@@ -87,6 +95,12 @@ func NewQmsg(source, msg, host string) Qmsg {
 func (qm *Qmsg) SetContainer(cnt ContainerInfo) Qmsg {
 	qm.IsContainer = true
 	qm.Container = cnt
+	return *qm
+}
+
+// SetImage sets information about the image
+func (qm *Qmsg) SetImage(img ImageInfo) Qmsg {
+	qm.Image = img
 	return *qm
 }
 

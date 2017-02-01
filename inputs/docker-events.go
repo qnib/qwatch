@@ -8,23 +8,25 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/events"
 	"github.com/docker/docker/client"
+	"github.com/zpatrick/go-config"
 	"golang.org/x/net/context"
-    "github.com/zpatrick/go-config"
 
 	"github.com/qnib/qwatch/types"
 )
+
 // DockerEvents is a simple qworker
 type DockerEvents struct {
-    qtypes.QWorker
+	qtypes.QWorker
 }
 
 // NewDockerEvents returns instance of DockerEventInput
 func NewDockerEvents(cfg *config.Config, qC qtypes.Channels) DockerEvents {
-    de := DockerEvents{}
-    de.Cfg = cfg
-    de.QChan = qC
-    return de
+	de := DockerEvents{}
+	de.Cfg = cfg
+	de.QChan = qC
+	return de
 }
+
 // Run subscribes to messages and events from the docker-engine
 func (de DockerEvents) Run() {
 	cli, err := client.NewEnvClient()
@@ -52,11 +54,6 @@ func (de DockerEvents) Run() {
 func parseMessage(msg events.Message) qtypes.Qmsg {
 	host := os.Getenv("DOCKER_HOST")
 	message := fmt.Sprintf("%s.%s", msg.Type, msg.Action)
-	cnt := qtypes.ContainerInfo{
-		ImageName:     msg.Actor.Attributes["image"],
-		ContainerID:   msg.ID,
-		ContainerName: msg.Actor.Attributes["name"],
-	}
 	qm := qtypes.Qmsg{
 		Version:     "1.1",
 		Source:      "docker-events",
@@ -64,8 +61,22 @@ func parseMessage(msg events.Message) qtypes.Qmsg {
 		Msg:         message,
 		IsContainer: false,
 		Time:        time.Unix(0, msg.TimeNano),
+		Type:        msg.Type,
+		Action:      msg.Action,
 	}
-	qm.SetContainer(cnt)
-	qm.Type = fmt.Sprintf("%s.%s", msg.Type, msg.Action)
+	fmt.Printf("%v\n", msg)
+	switch msg.Type {
+	case "image":
+		qm.SetImage(qtypes.ImageInfo{
+			Name: msg.Actor.Attributes["name"],
+			ID:   msg.Actor.ID,
+		})
+	case "container":
+		qm.SetContainer(qtypes.ContainerInfo{
+			ImageName:     msg.Actor.Attributes["image"],
+			ContainerID:   msg.ID,
+			ContainerName: msg.Actor.Attributes["name"],
+		})
+	}
 	return qm
 }

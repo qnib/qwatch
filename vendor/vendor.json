@@ -272,6 +272,48 @@
 			"revisionTime": "2014-10-17T20:07:13Z"
 		},
 		{
+			"checksumSHA1": "FRhS1BUn7QYJODTJaU1LF7uCka0=",
+			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver",
+			"revision": "2387cc1f01254d3a0055e034f5716278a1f420c7",
+			"revisionTime": "2016-12-20T21:52:15Z"
+		},
+		{
+			"checksumSHA1": "GYtNDxyckMgJew8cMZggWD9xfhg=",
+			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver/encoding",
+			"revision": "2387cc1f01254d3a0055e034f5716278a1f420c7",
+			"revisionTime": "2016-12-20T21:52:15Z"
+		},
+		{
+			"checksumSHA1": "9lgMFoaIFZe75vv7ln+IbPKHasE=",
+			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver/errors",
+			"revision": "2387cc1f01254d3a0055e034f5716278a1f420c7",
+			"revisionTime": "2016-12-20T21:52:15Z"
+		},
+		{
+			"checksumSHA1": "MeB74aEJl/Vif3wfI/yyskLXgQ8=",
+			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver/log",
+			"revision": "2387cc1f01254d3a0055e034f5716278a1f420c7",
+			"revisionTime": "2016-12-20T21:52:15Z"
+		},
+		{
+			"checksumSHA1": "QBWn/ajykCeEt1W21Ufl9RxLeX4=",
+			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver/structures",
+			"revision": "2387cc1f01254d3a0055e034f5716278a1f420c7",
+			"revisionTime": "2016-12-20T21:52:15Z"
+		},
+		{
+			"checksumSHA1": "vLBWZ/5wRQ4PIyIOW3dbXlKbd3s=",
+			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver/structures/graph",
+			"revision": "2387cc1f01254d3a0055e034f5716278a1f420c7",
+			"revisionTime": "2016-12-20T21:52:15Z"
+		},
+		{
+			"checksumSHA1": "WSdNJOxRdPV0gCzq7mX6cqIf3/c=",
+			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver/structures/messages",
+			"revision": "2387cc1f01254d3a0055e034f5716278a1f420c7",
+			"revisionTime": "2016-12-20T21:52:15Z"
+		},
+		{
 			"checksumSHA1": "7tZiMvVKwDTtqedmi6VGVhB07A4=",
 			"origin": "github.com/docker/docker/vendor/github.com/opencontainers/runc/libcontainer/user",
 			"path": "github.com/opencontainers/runc/libcontainer/user",
@@ -299,46 +341,52 @@
 			"revisionTime": "2017-01-21T17:43:07Z"
 		},
 		{
-			"checksumSHA1": "1cumxTVd49iZytOXJnekPEXbdGo=",
+			"checksumSHA1": "ha2Bid90etrscS/+ukdbt1cxo4k=",
 			"path": "github.com/qnib/qwatch",
-			"revision": "58e900698b9701df1595319d164778dc61b36c8f",
-			"revisionTime": "2017-02-01T13:04:08Z"
+			"revision": "1c5884344bc2fc1fb76ebee2130077c77d90c52e",
+			"revisionTime": "2017-02-01T13:25:19Z"
 		},
 		{
-			"checksumSHA1": "z+Q10GSsr17vUxdoL4Ku3DPVHRk=",
+			"checksumSHA1": "RB0Z695pdKGBTaZsTe8Pl4sbgL4=",
 			"path": "github.com/qnib/qwatch/cmd",
-			"revision": "58e900698b9701df1595319d164778dc61b36c8f",
-			"revisionTime": "2017-02-01T13:04:08Z"
+			"revision": "1c5884344bc2fc1fb76ebee2130077c77d90c52e",
+			"revisionTime": "2017-02-01T13:25:19Z"
 		},
 		{
-			"checksumSHA1": "aZUNBzOmSn0o/S5zx8hCRcjlVZo=",
+			"checksumSHA1": "q7ruqoKbIUwB37pMF2rRsgG3OEE=",
+			"path": "github.com/qnib/qwatch/filters",
+			"revision": "1c5884344bc2fc1fb76ebee2130077c77d90c52e",
+			"revisionTime": "2017-02-01T13:25:19Z"
+		},
+		{
+			"checksumSHA1": "QRWjGVr+HIl3HdigrHcOGMXgHkM=",
 			"path": "github.com/qnib/qwatch/inputs",
-			"revision": "58e900698b9701df1595319d164778dc61b36c8f",
-			"revisionTime": "2017-02-01T13:04:08Z"
+			"revision": "1c5884344bc2fc1fb76ebee2130077c77d90c52e",
+			"revisionTime": "2017-02-01T13:25:19Z"
 		},
 		{
-			"checksumSHA1": "e8wgOldUqH3l3yMAY0W3sg/ZEXc=",
+			"checksumSHA1": "5g/pZzYKa2PCMuR7HW15aI4sCLs=",
 			"path": "github.com/qnib/qwatch/outputs",
-			"revision": "58e900698b9701df1595319d164778dc61b36c8f",
-			"revisionTime": "2017-02-01T13:04:08Z"
+			"revision": "1c5884344bc2fc1fb76ebee2130077c77d90c52e",
+			"revisionTime": "2017-02-01T13:25:19Z"
 		},
 		{
-			"checksumSHA1": "p5PWULZqegQs6QCnaQ5wx2OJkik=",
+			"checksumSHA1": "XlG58xp7Ix8k+sNrZX1G1TIbT/8=",
 			"path": "github.com/qnib/qwatch/server",
-			"revision": "58e900698b9701df1595319d164778dc61b36c8f",
-			"revisionTime": "2017-02-01T13:04:08Z"
+			"revision": "1c5884344bc2fc1fb76ebee2130077c77d90c52e",
+			"revisionTime": "2017-02-01T13:25:19Z"
 		},
 		{
-			"checksumSHA1": "45h+ZQU7yfxQDSaG0jYsWe0rhdo=",
+			"checksumSHA1": "GJaF33AoZ4jn9dCvR2NX0adfga8=",
 			"path": "github.com/qnib/qwatch/types",
-			"revision": "58e900698b9701df1595319d164778dc61b36c8f",
-			"revisionTime": "2017-02-01T13:04:08Z"
+			"revision": "1c5884344bc2fc1fb76ebee2130077c77d90c52e",
+			"revisionTime": "2017-02-01T13:25:19Z"
 		},
 		{
-			"checksumSHA1": "RYiGOmBIIM4mQpUlutkvptQH/cA=",
+			"checksumSHA1": "7I9Zu2vGpoLfwRjvZgDiwJvWRcc=",
 			"path": "github.com/qnib/qwatch/utils",
-			"revision": "58e900698b9701df1595319d164778dc61b36c8f",
-			"revisionTime": "2017-02-01T13:04:08Z"
+			"revision": "1c5884344bc2fc1fb76ebee2130077c77d90c52e",
+			"revisionTime": "2017-02-01T13:25:19Z"
 		},
 		{
 			"checksumSHA1": "gMvUE4x4idMiMMzfH2ZkI2YDxUY=",
