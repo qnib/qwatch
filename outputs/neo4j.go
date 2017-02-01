@@ -49,8 +49,7 @@ func (o Neo4j) execCypher(cypher string) error {
 func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 	switch qm.Action {
 	case "create":
-		now := time.Now()
-		cypher := fmt.Sprintf("CREATE (c:Container {name:'%s', container_id: '%s', created:'%s' })", qm.Container.ContainerName, qm.Container.ContainerID, now)
+		cypher := fmt.Sprintf("CREATE (c:Container {name:'%s', container_id: '%s', created:'%s' })", qm.Container.ContainerName, qm.Container.ContainerID, qm.TimeNano)
 		log.Printf("[DD] Cypher: %s", cypher)
 		err := o.execCypher(cypher)
 		if err != nil {
@@ -66,7 +65,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 	case "die":
 		return nil
 	case "destroy":
-		cypher := fmt.Sprintf("MATCH (c:Container {container_id: '%s' }) SET c.destroyed='%s'", qm.Container.ContainerID, time.Now())
+		cypher := fmt.Sprintf("MATCH (c:Container {container_id: '%s' }) SET c.destroyed='%s'", qm.Container.ContainerID, qm.TimeNano)
 		log.Printf("[DD] Cypher: %s", cypher)
 		return o.execCypher(cypher)
 	default:
@@ -94,6 +93,10 @@ func (o Neo4j) handleMsg(qm qtypes.Qmsg) error {
 		return nil
 	}
 }
+// init the graph and create nodes that one needs
+func (o Neo4j) initGraph() error {
+    return nil
+}
 
 // Run prints the logs to stdout
 func (o Neo4j) Run() {
@@ -104,7 +107,10 @@ func (o Neo4j) Run() {
 		panic(err)
 	}
 	defer o.Conn.Close()
-
+    err = o.initGraph()
+    if err != nil {
+		panic(err)
+	}
 	bg := o.QChan.Log.Join()
 	for {
 		select {

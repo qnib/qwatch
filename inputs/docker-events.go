@@ -61,6 +61,7 @@ func parseMessage(msg events.Message) qtypes.Qmsg {
 		Msg:         message,
 		IsContainer: false,
 		Time:        time.Unix(0, msg.TimeNano),
+        TimeNano:    msg.TimeNano,
 		Type:        msg.Type,
 		Action:      msg.Action,
 	}

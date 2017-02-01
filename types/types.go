@@ -49,6 +49,7 @@ type Qmsg struct {
 	Host        string        `json:"host"`
 	Msg         string        `json:"short_message"`
 	Time        time.Time     `json:"time"`
+    TimeNano    int64         `json:"time_nano"`
 	Level       int           `json:"level"`
 	IsContainer bool          `json:"is_container"`
 	Container   ContainerInfo `json:"container"`
