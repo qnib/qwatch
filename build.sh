@@ -28,14 +28,14 @@ else
     ID=$(uname -s)
 fi
 
-#echo "> govendor fetch +missing"
-#govendor fetch +missing
-#echo "> govendor remove +unused"
-#govendor remove +unused
-#echo "> govendor update +local"
-#govendor update +local
-echo "> go get -d"
-go get -d
+echo "> govendor fetch +missing"
+govendor fetch +missing
+echo "> govendor remove +unused"
+govendor remove +unused
+echo "> govendor update +local"
+govendor update +local
+#echo "> go get -d"
+#go get -d
 
 rm -f ./bin/qwatch_${GIT_TAG}_${ID}
 go build -o ./bin/qwatch_${GIT_TAG}_${ID}
