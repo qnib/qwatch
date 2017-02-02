@@ -1,17 +1,17 @@
 #!/bin/bash
 set -e
 
-#govendor fetch +missing
-#echo "> govendor remove +unused"
-#govendor remove +unused
-#echo "> govendor fetch +missing"
-#govendor fetch +missing
-#echo "> govendor update +local"
-#govendor update +local
-echo "> go get github.com/stretchr/testify/assert"
-go get github.com/stretchr/testify/assert
-echo "> go get -d"
-go get -d
+govendor fetch +missing
+echo "> govendor remove +unused"
+govendor remove +unused
+echo "> govendor fetch +missing"
+govendor fetch +missing
+echo "> govendor update +local"
+govendor update +local
+#echo "> go get github.com/stretchr/testify/assert"
+#go get github.com/stretchr/testify/assert
+#echo "> go get -d"
+#go get -d
 if [ ! -d resources/coverity ];then
     mkdir -p resources/coverity
 fi
