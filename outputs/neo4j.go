@@ -48,7 +48,7 @@ func (o Neo4j) execCypher(cypher string) error {
 func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 	switch qm.Action {
 	case "create":
-		cypher := fmt.Sprintf("CREATE (c:Container {name:'%s', container_id: '%s', created:'%s' })", qm.Container.ContainerName, qm.Container.ContainerID, qm.TimeNano)
+		cypher := fmt.Sprintf("CREATE (c:Container {name:'%s', container_id: '%s', created:'%d' })", qm.Container.ContainerName, qm.Container.ContainerID, qm.TimeNano)
 		log.Printf("[DD] Cypher: %s", cypher)
 		err := o.execCypher(cypher)
 		if err != nil {
@@ -64,7 +64,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 	case "die":
 		return nil
 	case "destroy":
-		cypher := fmt.Sprintf("MATCH (c:Container {container_id: '%s' }) SET c.destroyed='%s'", qm.Container.ContainerID, qm.TimeNano)
+		cypher := fmt.Sprintf("MATCH (c:Container {container_id: '%s' }) SET c.destroyed='%d'", qm.Container.ContainerID, qm.TimeNano)
 		log.Printf("[DD] Cypher: %s", cypher)
 		return o.execCypher(cypher)
 	default:
@@ -95,6 +95,20 @@ func (o Neo4j) handleMsg(qm qtypes.Qmsg) error {
 
 // init the graph and create nodes that one needs
 func (o Neo4j) initGraph() error {
+	// https://github.com/docker/docker/blob/master/api/types/types.go#L276
+	cypher := `
+			MERGE (:CONTAINER_STATE { name:'running'})
+			MERGE (:CONTAINER_STATE { name:'paused'})
+			MERGE (:CONTAINER_STATE { name:'restarting'})
+			MERGE (:CONTAINER_STATE { name:'oomkilled'})
+			MERGE (:CONTAINER_STATE { name:'dead'})`
+	err := o.execCypher(cypher)
+	/* When implementing services
+	// https://github.com/docker/docker/blob/master/api/types/types.go#L255
+	*/
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
