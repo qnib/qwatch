@@ -60,7 +60,6 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 		m = map[string]interface{}{"container_id": qm.Container.ContainerID, "image_id": qm.Container.ImageName, "time": qm.TimeNano}
 		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
 		return o.execCypher(cypher, m)
-
 	case "start":
 		cypher := "MATCH (s:ContainerState {name: 'running'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
 		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
@@ -71,12 +70,38 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
 		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
 		return o.execCypher(cypher, m)
+	case "pause":
+		cypher := "MATCH (s:ContainerState {name: 'paused'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
+		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
+		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
+		return o.execCypher(cypher, m)
+	case "kill":
+		cypher := "MATCH (s:ContainerState {name: 'killed'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
+		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
+		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
+		return o.execCypher(cypher, m)
+	case "stop":
+		cypher := "MATCH (s:ContainerState {name: 'stopped'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
+		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
+		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
+		return o.execCypher(cypher, m)
+	case "restart":
+		cypher := "MATCH (s:ContainerState {name: 'restarted'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
+		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
+		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
+		return o.execCypher(cypher, m)
+	case "unpause":
+		cypher := "MATCH (s:ContainerState {name: 'unpaused'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
+		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
+		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
+		return o.execCypher(cypher, m)
 	case "destroy":
 		cypher := "MATCH (s:ContainerState {name: 'removed'}) MATCH (c:Container {container_id: {container_id}}) SET c.destroyed={time} CREATE (c)<-[:IS {time: {time}}]-(s)"
 		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
 		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
 		return o.execCypher(cypher, m)
 	default:
+		log.Printf("[II] Action is not recognized: %s", qm.Action)
 		return nil
 	}
 }
@@ -106,10 +131,13 @@ func (o Neo4j) handleMsg(qm qtypes.Qmsg) error {
 func (o Neo4j) initGraph() error {
 	// https://github.com/docker/docker/blob/master/api/types/types.go#L276
 	cypher := `
-	    MERGE (:ContainerState { name: 'created'})
+	    MERGE (:ContainerState { name:'created'})
 			MERGE (:ContainerState { name:'running'})
 			MERGE (:ContainerState { name:'paused'})
-			MERGE (:ContainerState { name:'restarting'})
+			MERGE (:ContainerState { name:'stopped'})
+			MERGE (:ContainerState { name:'unpaused'})
+			MERGE (:ContainerState { name:'restarted'})
+			MERGE (:ContainerState { name:'killed'})
 			MERGE (:ContainerState { name:'oomkilled'})
 			MERGE (:ContainerState { name:'dead'})
 			MERGE (:ContainerState { name:'removed'})`

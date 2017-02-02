@@ -12,12 +12,12 @@ It will use the information fetched from the inputs of `qwatch` and derived inve
 
 - [x] **0.7.0.x**  implement basic Neo4j backend 	
 
-- [ ] **0.7.1.x** implement deriving inventory from `docker-events` input
-    - [ ] .1 Images
-    - [ ] .2 Containers
-    - [ ] .3 network configuration
-    - [ ] .4 docker-engines
-    - [ ] .5 Docker SWARM
+- [x] **0.7.1.x** implement deriving inventory from `docker-events` input
+    - [x] Images
+    - [x] Containers
+    - [ ] network configuration
 - [ ] **0.7.2.x** implement deriving inventory from `docker-logs` input
-    - [ ] .1 which processes are running inside
-    - [ ] .2 how are the files doing
+    - [ ] which processes are running inside
+    - [ ] how are the files doing
+- [ ] **0.7.3.x** implement `docker-engine` log input
+- [ ] **0.7.4.x** fetch imput from `Docker SWARM`
