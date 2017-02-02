@@ -3,7 +3,6 @@ package qoutput
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/deckarep/golang-set"
 	bolt "github.com/johnnadratowski/golang-neo4j-bolt-driver"
@@ -93,9 +92,10 @@ func (o Neo4j) handleMsg(qm qtypes.Qmsg) error {
 		return nil
 	}
 }
+
 // init the graph and create nodes that one needs
 func (o Neo4j) initGraph() error {
-    return nil
+	return nil
 }
 
 // Run prints the logs to stdout
@@ -107,8 +107,8 @@ func (o Neo4j) Run() {
 		panic(err)
 	}
 	defer o.Conn.Close()
-    err = o.initGraph()
-    if err != nil {
+	err = o.initGraph()
+	if err != nil {
 		panic(err)
 	}
 	bg := o.QChan.Log.Join()

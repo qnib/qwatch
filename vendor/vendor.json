@@ -266,12 +266,6 @@
 			"revisionTime": "2016-10-19T10:01:30Z"
 		},
 		{
-			"checksumSHA1": "40vJyUB4ezQSn/NSadsKEOrudMc=",
-			"path": "github.com/inconshreveable/mousetrap",
-			"revision": "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75",
-			"revisionTime": "2014-10-17T20:07:13Z"
-		},
-		{
 			"checksumSHA1": "FRhS1BUn7QYJODTJaU1LF7uCka0=",
 			"path": "github.com/johnnadratowski/golang-neo4j-bolt-driver",
 			"revision": "2387cc1f01254d3a0055e034f5716278a1f420c7",
@@ -341,34 +335,34 @@
 			"revisionTime": "2017-01-21T17:43:07Z"
 		},
 		{
-			"checksumSHA1": "ei90abjJ32XWU1bFan36TNqAhJk=",
+			"checksumSHA1": "jydEDRaAljAdLlqc673J7QlRqz0=",
 			"path": "github.com/qnib/qwatch",
-			"revision": "65b2903307ffd12d46466450f280905fd67888f7",
-			"revisionTime": "2017-02-01T20:47:01Z"
+			"revision": "fcd036f36cdf55f5898cbad5b4918914b5a6c2c3",
+			"revisionTime": "2017-02-01T21:30:13Z"
 		},
 		{
-			"checksumSHA1": "z+Q10GSsr17vUxdoL4Ku3DPVHRk=",
+			"checksumSHA1": "RB0Z695pdKGBTaZsTe8Pl4sbgL4=",
 			"path": "github.com/qnib/qwatch/cmd",
-			"revision": "65b2903307ffd12d46466450f280905fd67888f7",
-			"revisionTime": "2017-02-01T20:47:01Z"
+			"revision": "fcd036f36cdf55f5898cbad5b4918914b5a6c2c3",
+			"revisionTime": "2017-02-01T21:30:13Z"
 		},
 		{
 			"checksumSHA1": "q7ruqoKbIUwB37pMF2rRsgG3OEE=",
 			"path": "github.com/qnib/qwatch/filters",
-			"revision": "65b2903307ffd12d46466450f280905fd67888f7",
-			"revisionTime": "2017-02-01T20:47:01Z"
+			"revision": "fcd036f36cdf55f5898cbad5b4918914b5a6c2c3",
+			"revisionTime": "2017-02-01T21:30:13Z"
 		},
 		{
-			"checksumSHA1": "QRWjGVr+HIl3HdigrHcOGMXgHkM=",
+			"checksumSHA1": "K+7lssynprlpjjem7du5/aXNda8=",
 			"path": "github.com/qnib/qwatch/inputs",
-			"revision": "65b2903307ffd12d46466450f280905fd67888f7",
-			"revisionTime": "2017-02-01T20:47:01Z"
+			"revision": "fcd036f36cdf55f5898cbad5b4918914b5a6c2c3",
+			"revisionTime": "2017-02-01T21:30:13Z"
 		},
 		{
-			"checksumSHA1": "5g/pZzYKa2PCMuR7HW15aI4sCLs=",
+			"checksumSHA1": "ChTxMW/M9dWyT9L1K1SJJdyUJHM=",
 			"path": "github.com/qnib/qwatch/outputs",
-			"revision": "65b2903307ffd12d46466450f280905fd67888f7",
-			"revisionTime": "2017-02-01T20:47:01Z"
+			"revision": "fcd036f36cdf55f5898cbad5b4918914b5a6c2c3",
+			"revisionTime": "2017-02-01T21:30:13Z"
 		},
 		{
 			"checksumSHA1": "jcyOhNTpG9sXg6bAQfzdCiR0Alo=",
@@ -377,34 +371,22 @@
 			"revisionTime": "2017-02-01T20:47:01Z"
 		},
 		{
-			"checksumSHA1": "lx+Q4TwlYxJJTGwD2AU+v9PnIcY=",
+			"checksumSHA1": "XlG58xp7Ix8k+sNrZX1G1TIbT/8=",
 			"path": "github.com/qnib/qwatch/server",
-			"revision": "65b2903307ffd12d46466450f280905fd67888f7",
-			"revisionTime": "2017-02-01T20:47:01Z"
+			"revision": "fcd036f36cdf55f5898cbad5b4918914b5a6c2c3",
+			"revisionTime": "2017-02-01T21:30:13Z"
 		},
 		{
-			"checksumSHA1": "BCS9V5QOrMV0o9Cwp661t//oOqw=",
+			"checksumSHA1": "HV8vZxstuaXhWliH1Bp6Dkj8AO8=",
 			"path": "github.com/qnib/qwatch/types",
-			"revision": "65b2903307ffd12d46466450f280905fd67888f7",
-			"revisionTime": "2017-02-01T20:47:01Z"
+			"revision": "fcd036f36cdf55f5898cbad5b4918914b5a6c2c3",
+			"revisionTime": "2017-02-01T21:30:13Z"
 		},
 		{
-			"checksumSHA1": "RYiGOmBIIM4mQpUlutkvptQH/cA=",
+			"checksumSHA1": "7I9Zu2vGpoLfwRjvZgDiwJvWRcc=",
 			"path": "github.com/qnib/qwatch/utils",
-			"revision": "65b2903307ffd12d46466450f280905fd67888f7",
-			"revisionTime": "2017-02-01T20:47:01Z"
-		},
-		{
-			"checksumSHA1": "gMvUE4x4idMiMMzfH2ZkI2YDxUY=",
-			"path": "github.com/spf13/cobra",
-			"revision": "a272c3cbd5ff80a5bf5c5603df50183f9f3f7324",
-			"revisionTime": "2016-07-08T20:24:02Z"
-		},
-		{
-			"checksumSHA1": "frhqjUscvFwHZ7XpfuJgPPDKxFw=",
-			"path": "github.com/spf13/pflag",
-			"revision": "8f6a28b0916586e7f22fe931ae2fcfc380b1c0e6",
-			"revisionTime": "2016-04-13T14:43:53Z"
+			"revision": "fcd036f36cdf55f5898cbad5b4918914b5a6c2c3",
+			"revisionTime": "2017-02-01T21:30:13Z"
 		},
 		{
 			"checksumSHA1": "Bn333k9lTndxU3D6n/G5c+GMcYY=",
