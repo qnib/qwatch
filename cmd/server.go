@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"github.com/codegangsta/cli"
 	"github.com/qnib/qwatch/server"
-    "github.com/codegangsta/cli"
 )
 
 // ServerCmd provides the flags and the execution
@@ -15,7 +15,7 @@ var ServerCmd = cli.Command{
 			Value: "qwatch.yml",
 			Usage: "Config file, will overwrite flag default if present.",
 		},
-        cli.StringFlag{
+		cli.StringFlag{
 			Name:  "inputs",
 			Value: "gelf",
 			Usage: "Comma separated list of inputs to start",
@@ -35,7 +35,7 @@ var ServerCmd = cli.Command{
 			Value: 12201,
 			Usage: "UDP port of GELF collector",
 		},
-        cli.StringFlag{
+		cli.StringFlag{
 			Name:  "input.docker-gelf.host",
 			Value: "0.0.0.0",
 			Usage: "UDP host of GELF collector",

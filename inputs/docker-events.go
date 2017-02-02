@@ -61,11 +61,11 @@ func parseMessage(msg events.Message) qtypes.Qmsg {
 		Msg:         message,
 		IsContainer: false,
 		Time:        time.Unix(0, msg.TimeNano),
-        TimeNano:    msg.TimeNano,
+		TimeNano:    msg.TimeNano,
 		Type:        msg.Type,
 		Action:      msg.Action,
 	}
-	fmt.Printf("%v\n", msg)
+	//fmt.Printf("%v\n", msg)
 	switch msg.Type {
 	case "image":
 		qm.SetImage(qtypes.ImageInfo{

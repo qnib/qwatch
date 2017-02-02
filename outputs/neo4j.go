@@ -30,14 +30,14 @@ func NewNeo4j(cfg *config.Config, qC qtypes.Channels) Neo4j {
 	return o
 }
 
-func (o Neo4j) execCypher(cypher string) error {
+func (o Neo4j) execCypher(cypher string, m map[string]interface{}) error {
 	stmt, err := o.Conn.PrepareNeo(cypher)
 	defer stmt.Close()
 	if err != nil {
 		log.Println("[EE] during PrepareNeo: ", cypher)
 		return err
 	}
-	_, err = stmt.ExecNeo(nil)
+	_, err = stmt.ExecNeo(m)
 	if err != nil {
 		log.Println("[EE] during ExecNeo: ", err)
 		return err
@@ -48,25 +48,34 @@ func (o Neo4j) execCypher(cypher string) error {
 func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 	switch qm.Action {
 	case "create":
-		cypher := fmt.Sprintf("CREATE (c:Container {name:'%s', container_id: '%s', created:'%d' })", qm.Container.ContainerName, qm.Container.ContainerID, qm.TimeNano)
-		log.Printf("[DD] Cypher: %s", cypher)
-		err := o.execCypher(cypher)
+		cypher := "MATCH (s:ContainerState {name: 'created'}) CREATE UNIQUE (c:Container {name: {name}, container_id: {container_id}, created: {time}})<-[:IS {created: {time}}]-(s)"
+		m := map[string]interface{}{"name": qm.Container.ContainerName, "container_id": qm.Container.ContainerID, "time": qm.TimeNano}
+		log.Printf("[DD] Cypher: '%s', map:'%v'", cypher, m)
+		err := o.execCypher(cypher, m)
 		if err != nil {
+			log.Println("[EE] during ExecCypher: ", err)
 			return err
 		}
-		cypher = fmt.Sprintf("MATCH (c:Container {container_id: '%s'}) MERGE (i:Image {id:'%s'}) CREATE (c)-[:USE]->(i)",
-			qm.Container.ContainerID, qm.Container.ImageName)
-		log.Printf("[DD] Cypher: %s", cypher)
-		return o.execCypher(cypher)
+		cypher = "MATCH (c:Container {container_id: {container_id}}) MERGE (i:Image {id: {image_id}}) CREATE (c)-[:USE {time: {time}}]->(i)"
+		m = map[string]interface{}{"container_id": qm.Container.ContainerID, "image_id": qm.Container.ImageName, "time": qm.TimeNano}
+		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
+		return o.execCypher(cypher, m)
 
 	case "start":
-		return nil
+		cypher := "MATCH (s:ContainerState {name: 'running'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
+		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
+		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
+		return o.execCypher(cypher, m)
 	case "die":
-		return nil
+		cypher := "MATCH (s:ContainerState {name: 'dead'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
+		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
+		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
+		return o.execCypher(cypher, m)
 	case "destroy":
-		cypher := fmt.Sprintf("MATCH (c:Container {container_id: '%s' }) SET c.destroyed='%d'", qm.Container.ContainerID, qm.TimeNano)
-		log.Printf("[DD] Cypher: %s", cypher)
-		return o.execCypher(cypher)
+		cypher := "MATCH (s:ContainerState {name: 'removed'}) MATCH (c:Container {container_id: {container_id}}) SET c.destroyed={time} CREATE (c)<-[:IS {time: {time}}]-(s)"
+		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
+		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
+		return o.execCypher(cypher, m)
 	default:
 		return nil
 	}
@@ -77,7 +86,7 @@ func (o Neo4j) handleImg(qm qtypes.Qmsg) error {
 	case "pull":
 		cypher := fmt.Sprintf("MERGE (i:Image {id:'%s'})", qm.Image.ID)
 		log.Printf("[DD] Cypher: %s", cypher)
-		return o.execCypher(cypher)
+		return o.execCypher(cypher, nil)
 	}
 	return nil
 }
@@ -97,12 +106,14 @@ func (o Neo4j) handleMsg(qm qtypes.Qmsg) error {
 func (o Neo4j) initGraph() error {
 	// https://github.com/docker/docker/blob/master/api/types/types.go#L276
 	cypher := `
-			MERGE (:CONTAINER_STATE { name:'running'})
-			MERGE (:CONTAINER_STATE { name:'paused'})
-			MERGE (:CONTAINER_STATE { name:'restarting'})
-			MERGE (:CONTAINER_STATE { name:'oomkilled'})
-			MERGE (:CONTAINER_STATE { name:'dead'})`
-	err := o.execCypher(cypher)
+	    MERGE (:ContainerState { name: 'created'})
+			MERGE (:ContainerState { name:'running'})
+			MERGE (:ContainerState { name:'paused'})
+			MERGE (:ContainerState { name:'restarting'})
+			MERGE (:ContainerState { name:'oomkilled'})
+			MERGE (:ContainerState { name:'dead'})
+			MERGE (:ContainerState { name:'removed'})`
+	err := o.execCypher(cypher, nil)
 	/* When implementing services
 	// https://github.com/docker/docker/blob/master/api/types/types.go#L255
 	*/
