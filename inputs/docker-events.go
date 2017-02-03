@@ -2,6 +2,7 @@ package qinput
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"time"
 
@@ -33,13 +34,16 @@ func (de DockerEvents) Run() {
 	if err != nil {
 		panic(err)
 	}
-
+	info, err := cli.Info(context.Background())
+	if err != nil {
+		log.Printf("[EE] Error during Info(): %v >err> %s", info, err)
+	}
 	msgs, errs := cli.Events(context.Background(), types.EventsOptions{})
 	bg := de.QChan.Log.Join()
 	for {
 		select {
 		case dMsg := <-msgs:
-			bg.Send(parseMessage(dMsg))
+			bg.Send(parseMessage(dMsg, info))
 		case dErr := <-errs:
 			if dErr != nil {
 				qm := qtypes.Qmsg{
@@ -51,7 +55,7 @@ func (de DockerEvents) Run() {
 	}
 }
 
-func parseMessage(msg events.Message) qtypes.Qmsg {
+func parseMessage(msg events.Message, info types.Info) qtypes.Qmsg {
 	host := os.Getenv("DOCKER_HOST")
 	message := fmt.Sprintf("%s.%s", msg.Type, msg.Action)
 	qm := qtypes.Qmsg{
@@ -64,6 +68,7 @@ func parseMessage(msg events.Message) qtypes.Qmsg {
 		TimeNano:    msg.TimeNano,
 		Type:        msg.Type,
 		Action:      msg.Action,
+		EngineID:    info.ID,
 	}
 	//fmt.Printf("%v\n", msg)
 	switch msg.Type {

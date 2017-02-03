@@ -3,8 +3,11 @@ package qoutput
 import (
 	"fmt"
 	"log"
+	"reflect"
+	"time"
 
 	"github.com/deckarep/golang-set"
+	dtypes "github.com/docker/docker/api/types"
 	bolt "github.com/johnnadratowski/golang-neo4j-bolt-driver"
 	"github.com/zpatrick/go-config"
 
@@ -48,8 +51,12 @@ func (o Neo4j) execCypher(cypher string, m map[string]interface{}) error {
 func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 	switch qm.Action {
 	case "create":
-		cypher := "MATCH (s:ContainerState {name: 'created'}) CREATE UNIQUE (c:Container {name: {name}, container_id: {container_id}, created: {time}})<-[:IS {created: {time}}]-(s)"
-		m := map[string]interface{}{"name": qm.Container.ContainerName, "container_id": qm.Container.ContainerID, "time": qm.TimeNano}
+		cypher := `
+		MATCH (s:ContainerState {name: 'created'}) MATCH (de:DockerEngine {id:{engine_id}})
+			CREATE UNIQUE (de)<-[:PartOf]-(c:Container {name: {name}, container_id: {container_id}, created: {time}})<-[:IS {created: {time}}]-(s)`
+		m := map[string]interface{}{"name": qm.Container.ContainerName, "time": qm.TimeNano}
+		m["container_id"] = qm.Container.ContainerID
+		m["engine_id"] = qm.EngineID
 		log.Printf("[DD] Cypher: '%s', map:'%v'", cypher, m)
 		err := o.execCypher(cypher, m)
 		if err != nil {
@@ -151,6 +158,40 @@ func (o Neo4j) initGraph() error {
 	return nil
 }
 
+func (o Neo4j) handleInfo(i dtypes.Info) {
+	cypher := `
+	MERGE (n:DockerEngine {id:{id}, name:{name}})
+		ON MATCH SET n.last_seen={time}
+		ON CREATE SET n.created={time},n.last_seen={time}
+	`
+	m := map[string]interface{}{"id": i.ID, "name": i.Name}
+	m["time"] = time.Now().UnixNano()
+	err := o.execCypher(cypher, m)
+	if err != nil {
+		log.Printf("[EE] Error during handleInfo: '%s' '%v'\n", err, i)
+	}
+}
+
+func (o Neo4j) handleSwarmNode(n qtypes.DockerNode) {
+	cypher := `
+	MATCH (d:DockerEngine {id:{engine_id}})
+	MERGE (n:SwarmNode {id:{id}, name:{name}})-[:PartOf]->(d)
+		ON MATCH SET n.last_seen={time}, n.node_status={node_status}
+		ON CREATE SET n.addr={node_addr},n.created={created},n.last_seen={time}
+	`
+	m := map[string]interface{}{"id": n.ID, "name": n.Description.Hostname}
+	m["engine_id"] = n.EngineID
+	m["node_status"] = string(n.Status.State)
+	m["node_addr"] = n.Status.Addr
+	m["created"] = n.CreatedAt.UnixNano()
+	m["time"] = time.Now().UnixNano()
+	//log.Printf("[DD] Cypher: '%s', map:'%v'", cypher, m)
+	err := o.execCypher(cypher, m)
+	if err != nil {
+		log.Printf("[EE] Error during handleSwarmNode: '%s' '%v'\n", err, n)
+	}
+}
+
 // Run prints the logs to stdout
 func (o Neo4j) Run() {
 	driver := bolt.NewDriver()
@@ -165,11 +206,21 @@ func (o Neo4j) Run() {
 		panic(err)
 	}
 	bg := o.QChan.Log.Join()
+	ig := o.QChan.Inventory.Join()
 	for {
 		select {
 		case val := <-bg.In:
 			log := val.(qtypes.Qmsg)
 			o.handleMsg(log)
+		case val := <-ig.In:
+			switch val := val.(type) {
+			case qtypes.DockerNode:
+				o.handleSwarmNode(val)
+			case dtypes.Info:
+				o.handleInfo(val)
+			default:
+				log.Printf("[WW] Do not recognise: %v", reflect.TypeOf(val))
+			}
 		}
 	}
 }
