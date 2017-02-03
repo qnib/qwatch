@@ -82,10 +82,16 @@ func ServeQlog(ctx *cli.Context) error {
 		}
 		go qw.Run()
 	}
+	/********
+	Somehow I have to waut until all inputs/outputs are up
+	https://github.com/qnib/qwatch/issues/32 */
+	time.Sleep(1000 * time.Millisecond)
+
 	//cfo.PrintGraph()
 	// Inserts tick to get Inventory started
 	var tickCnt int64
 	qC.Tick.Send(tickCnt)
+	time.Sleep(100 * time.Millisecond)
 	for {
 		select {
 		case <-qC.Done:

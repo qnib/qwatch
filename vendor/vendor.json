@@ -3,6 +3,10 @@
 	"ignore": "test",
 	"package": [
 		{
+			"path": "context",
+			"revision": ""
+		},
+		{
 			"checksumSHA1": "hqDDDpue/5363luidNMBS8z8eJU=",
 			"path": "github.com/BurntSushi/toml",
 			"revision": "99064174e013895bbd9b025c31100bd1d9b590ca",
@@ -278,52 +282,52 @@
 			"revisionTime": "2017-01-21T17:43:07Z"
 		},
 		{
-			"checksumSHA1": "NZC0IgV7tC+310LwsfhVfCD/WGw=",
+			"checksumSHA1": "ukqvrnWFZ9JVLVBJYCITNxqdDy0=",
 			"path": "github.com/qnib/qwatch",
-			"revision": "a5f58b249acb8e17b706816460b733dfe66ad18b",
-			"revisionTime": "2017-02-02T16:16:21Z"
+			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
+			"revisionTime": "2017-02-03T17:53:38Z"
 		},
 		{
-			"checksumSHA1": "yGVcrS921KGc56YHE21uAWonlXY=",
+			"checksumSHA1": "gOHV/BmZ+CRroEzGnJwG9nQzyh0=",
 			"path": "github.com/qnib/qwatch/cmd",
-			"revision": "a5f58b249acb8e17b706816460b733dfe66ad18b",
-			"revisionTime": "2017-02-02T16:16:21Z"
+			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
+			"revisionTime": "2017-02-03T17:53:38Z"
 		},
 		{
 			"checksumSHA1": "q7ruqoKbIUwB37pMF2rRsgG3OEE=",
 			"path": "github.com/qnib/qwatch/filters",
-			"revision": "a5f58b249acb8e17b706816460b733dfe66ad18b",
-			"revisionTime": "2017-02-02T16:16:21Z"
+			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
+			"revisionTime": "2017-02-03T17:53:38Z"
 		},
 		{
-			"checksumSHA1": "MFgcrQXODToQKFDzKyL4gck1wY4=",
+			"checksumSHA1": "qMKvvh/VGsfaLG7hFGcQqwKY+NQ=",
 			"path": "github.com/qnib/qwatch/inputs",
-			"revision": "a5f58b249acb8e17b706816460b733dfe66ad18b",
-			"revisionTime": "2017-02-02T16:16:21Z"
+			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
+			"revisionTime": "2017-02-03T17:53:38Z"
 		},
 		{
-			"checksumSHA1": "Fvb3ylSoDuS6cBU88EvlHljacVw=",
+			"checksumSHA1": "Yo984j0DN6bgmLqIsL5UmpB8xBI=",
 			"path": "github.com/qnib/qwatch/outputs",
-			"revision": "a5f58b249acb8e17b706816460b733dfe66ad18b",
-			"revisionTime": "2017-02-02T16:16:21Z"
+			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
+			"revisionTime": "2017-02-03T17:53:38Z"
 		},
 		{
-			"checksumSHA1": "a0LnapjM7rhbfx1Xq3pOPjIi+U8=",
+			"checksumSHA1": "KKhnsCHzt1EoIIqmsMAKwNVlo5k=",
 			"path": "github.com/qnib/qwatch/server",
-			"revision": "a5f58b249acb8e17b706816460b733dfe66ad18b",
-			"revisionTime": "2017-02-02T16:16:21Z"
+			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
+			"revisionTime": "2017-02-03T17:53:38Z"
 		},
 		{
-			"checksumSHA1": "wNazTR0kJM4wTgHhJHo50NoScvo=",
+			"checksumSHA1": "cG+6aL5ybnEKBHGPlDgZnEuYucY=",
 			"path": "github.com/qnib/qwatch/types",
-			"revision": "a5f58b249acb8e17b706816460b733dfe66ad18b",
-			"revisionTime": "2017-02-02T16:16:21Z"
+			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
+			"revisionTime": "2017-02-03T17:53:38Z"
 		},
 		{
 			"checksumSHA1": "7I9Zu2vGpoLfwRjvZgDiwJvWRcc=",
 			"path": "github.com/qnib/qwatch/utils",
-			"revision": "a5f58b249acb8e17b706816460b733dfe66ad18b",
-			"revisionTime": "2017-02-02T16:16:21Z"
+			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
+			"revisionTime": "2017-02-03T17:53:38Z"
 		},
 		{
 			"checksumSHA1": "JXUVA1jky8ZX8w09p2t5KLs97Nc=",

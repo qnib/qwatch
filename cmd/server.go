@@ -32,8 +32,13 @@ var ServerCmd = cli.Command{
 		},
 		cli.IntFlag{
 			Name:  "input.docker-api.swarm.tick",
-			Value: 5,
+			Value: 1,
 			Usage: "Query Swarm endpoint every n ticks",
+		},
+		cli.IntFlag{
+			Name:  "input.docker-api.images.tick",
+			Value: 1,
+			Usage: "Query image endpoint every n ticks",
 		},
 		cli.IntFlag{
 			Name:  "input.docker-api.services.tick",

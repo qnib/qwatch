@@ -1,8 +1,15 @@
 ticker:
     interval: 15000
-inputs: "docker-gelf,docker-events"
-handlers: "log,elasticsearch"
+inputs: "docker-gelf,docker-api,docker-events"
+handlers: "log,neo4j"
 input:
     docker-gelf:
         port: 12201
         host: 0.0.0.0
+    docker-api:
+        images:
+          tick: 15
+        swarm:
+          tick: 1
+        services:
+          tick: 1

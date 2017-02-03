@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/swarm"
 	"github.com/grafov/bcast"
 )
@@ -117,4 +118,18 @@ func (qm *Qmsg) SetTimestamp(ts time.Time) Qmsg {
 type DockerNode struct {
 	swarm.Node
 	EngineID string
+}
+
+// DockerImageSummary is a superset of swarm.Node, which passes along the ID of cli.Info
+type DockerImageSummary struct {
+	types.ImageSummary
+	EngineID string
+}
+
+func (di DockerImageSummary) String() string {
+	var name string
+	if len(di.RepoTags) > 0 {
+		name = di.RepoTags[0]
+	}
+	return fmt.Sprintf("%-20s ID:%s", name, string(di.ID[7:19]))
 }
