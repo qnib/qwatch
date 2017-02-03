@@ -27,8 +27,18 @@ var ServerCmd = cli.Command{
 		},
 		cli.IntFlag{
 			Name:  "ticker.interval",
-			Value: 15000,
+			Value: 5000,
 			Usage: "Interval of global ticker in milliseconds",
+		},
+		cli.IntFlag{
+			Name:  "input.docker-api.swarm.tick",
+			Value: 5,
+			Usage: "Query Swarm endpoint every n ticks",
+		},
+		cli.IntFlag{
+			Name:  "input.docker-api.services.tick",
+			Value: 1,
+			Usage: "Query services endpoint every n ticks",
 		},
 		cli.IntFlag{
 			Name:  "input.docker-gelf.port",
