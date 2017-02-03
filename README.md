@@ -20,4 +20,15 @@ It will use the information fetched from the inputs of `qwatch` and derived inve
     - [ ] which processes are running inside
     - [ ] how are the files doing
 - [ ] **0.7.3.x** implement `docker-engine` log input
-- [ ] **0.7.4.x** fetch imput from `Docker SWARM`
+- [ ] **0.7.4.x** create `docker-api` input
+    - [x] Fetch and push engine `Info()`
+    - [x] fetch and push `swarm.Node`
+    - [ ] fetch and push `ContainerList` #22
+    - [ ] fetch and push `ImageList` #23
+    - [ ] fetch and push `NetworkList` #24
+    - [ ] fetch and push `VolumeList` #25
+    - [ ] fetch and push `ServiceList` #26
+    - [ ] fetch and push `TasksList` #27
+    - [ ] fetch and push `SecretList` #28
+    - [ ] fetch and push `PluginList` #29
+    - [ ] fetch and push `CheckpointList` #30
