@@ -47,6 +47,9 @@ func ServeQlog(ctx *cli.Context) error {
 		case "docker-gelf":
 			log.Println("Start the docker-gelf input")
 			qw = qinput.NewDockerGelf(cfg, qC)
+		case "docker-api":
+			log.Println("Start the docker-api input")
+			qw = qinput.NewDockerAPI(cfg, qC)
 		case "docker-events":
 			log.Println("Start the DockerEvents collector")
 			qw = qinput.NewDockerEvents(cfg, qC)
@@ -73,23 +76,24 @@ func ServeQlog(ctx *cli.Context) error {
 		case "neo4j":
 			log.Println("Start the neo4j handler")
 			qw = qoutput.NewNeo4j(cfg, qC)
-		case "elasticsearch":
+			/*case "elasticsearch":
 			log.Println("Start the elasticsearch handler")
-			qw = qoutput.NewElasticsearch(cfg, qC)
+			qw = qoutput.NewElasticsearch(cfg, qC)*/
 		}
 		go qw.Run()
 	}
 	//cfo.PrintGraph()
 	// Inserts tick to get Inventory started
-	qC.Tick.Send(0)
+	var tickCnt int64
+	qC.Tick.Send(tickCnt)
 	for {
 		select {
 		case <-qC.Done:
 			fmt.Printf("\nDone\n")
 			return nil
 		case <-ticker:
-			qC.Tick.Send(0)
+			tickCnt++
+			qC.Tick.Send(tickCnt)
 		}
 	}
-	return nil
 }

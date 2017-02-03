@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/docker/docker/api/types/swarm"
 	"github.com/grafov/bcast"
 )
 
@@ -49,11 +50,12 @@ type Qmsg struct {
 	Host        string        `json:"host"`
 	Msg         string        `json:"short_message"`
 	Time        time.Time     `json:"time"`
-    TimeNano    int64         `json:"time_nano"`
+	TimeNano    int64         `json:"time_nano"`
 	Level       int           `json:"level"`
 	IsContainer bool          `json:"is_container"`
 	Container   ContainerInfo `json:"container"`
 	Image       ImageInfo     `json:"container"`
+	EngineID    string        `json:"engine_id"`
 }
 
 // GetCntInfo returns container info if a container is involved, an empty string otherwise
@@ -109,4 +111,10 @@ func (qm *Qmsg) SetImage(img ImageInfo) Qmsg {
 func (qm *Qmsg) SetTimestamp(ts time.Time) Qmsg {
 	qm.Time = ts
 	return *qm
+}
+
+// DockerNode is a superset of swarm.Node, which passes along the ID of cli.Info
+type DockerNode struct {
+	swarm.Node
+	EngineID string
 }
