@@ -17,7 +17,7 @@ It will use the information fetched from the inputs of `qwatch` and derived inve
 - [x] **0.7.1.x** implement deriving inventory from `docker-events` input
     - [x] Images
     - [x] Containers
-    - [ ] network configuration
+    - [x] network configuration
 - [ ] **0.7.2.x** create `docker-api` input
     - [x] Fetch and push engine `Info()`
     - [x] fetch and push `swarm.Node`
