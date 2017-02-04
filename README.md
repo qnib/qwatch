@@ -16,11 +16,7 @@ It will use the information fetched from the inputs of `qwatch` and derived inve
     - [x] Images
     - [x] Containers
     - [ ] network configuration
-- [ ] **0.7.2.x** implement deriving inventory from `docker-logs` input
-    - [ ] which processes are running inside
-    - [ ] how are the files doing
-- [ ] **0.7.3.x** implement `docker-engine` log input
-- [ ] **0.7.4.x** create `docker-api` input
+- [ ] **0.7.2.x** create `docker-api` input
     - [x] Fetch and push engine `Info()`
     - [x] fetch and push `swarm.Node`
     - [ ] fetch and push `ContainerList` #22
@@ -32,3 +28,7 @@ It will use the information fetched from the inputs of `qwatch` and derived inve
     - [ ] fetch and push `SecretList` #28
     - [ ] fetch and push `PluginList` #29
     - [ ] fetch and push `CheckpointList` #30
+
+- [ ] **0.7.x** implement deriving inventory from `docker-logs` input
+    - [ ] which processes are running inside
+    - [ ] how are the files doing
