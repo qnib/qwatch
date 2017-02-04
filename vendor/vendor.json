@@ -52,12 +52,6 @@
 			"revisionTime": "2017-02-02T20:30:32Z"
 		},
 		{
-			"checksumSHA1": "Gj+xR1VgFKKmFXYOJMnAczC3Znk=",
-			"path": "github.com/docker/distribution/digestset",
-			"revision": "fb0bebc4b64e3881cc52a2478d749845ed76d2a8",
-			"revisionTime": "2017-01-27T23:42:54Z"
-		},
-		{
 			"checksumSHA1": "V6JHiPCGQc5iaRyqRtiTGq7RNpM=",
 			"origin": "github.com/docker/docker/vendor/github.com/docker/distribution/reference",
 			"path": "github.com/docker/distribution/reference",
@@ -91,12 +85,6 @@
 		{
 			"checksumSHA1": "J2OKngfI3vgswudr9PZVUFcRRu0=",
 			"path": "github.com/docker/docker/api/types/filters",
-			"revision": "c3b660b112804dfb1752efc1368a104897c7b884",
-			"revisionTime": "2017-02-03T08:37:54Z"
-		},
-		{
-			"checksumSHA1": "yeB781yxPhnN6OXQ9/qSsyih3ek=",
-			"path": "github.com/docker/docker/api/types/image",
 			"revision": "c3b660b112804dfb1752efc1368a104897c7b884",
 			"revisionTime": "2017-02-03T08:37:54Z"
 		},
@@ -255,13 +243,6 @@
 			"revisionTime": "2016-12-20T21:52:15Z"
 		},
 		{
-			"checksumSHA1": "qj7IAU2RRq99oaIEGH0eLfX/UcM=",
-			"origin": "github.com/docker/docker/vendor/github.com/opencontainers/go-digest",
-			"path": "github.com/opencontainers/go-digest",
-			"revision": "aa2ec055abd10d26d539eb630a92241b781ce4bc",
-			"revisionTime": "2017-01-31T01:35:07Z"
-		},
-		{
 			"checksumSHA1": "ynJSWoF6v+3zMnh9R0QmmG6iGV8=",
 			"origin": "github.com/docker/docker/vendor/github.com/pkg/errors",
 			"path": "github.com/pkg/errors",
@@ -282,66 +263,58 @@
 			"revisionTime": "2017-01-21T17:43:07Z"
 		},
 		{
-			"checksumSHA1": "JsLmMuChoRR+g+u5Hs+k5WTkEEg=",
+			"checksumSHA1": "vhbbp0jti9CvfwX8W5NA80XyWQk=",
 			"path": "github.com/qnib/qwatch",
-			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
-			"revisionTime": "2017-02-03T17:53:38Z"
+			"revision": "0029c65cd0b8bc5942e272cabc95a0212bf32b8d",
+			"revisionTime": "2017-02-04T08:30:33Z"
 		},
 		{
-			"checksumSHA1": "gOHV/BmZ+CRroEzGnJwG9nQzyh0=",
+			"checksumSHA1": "PAjmkEeCrJVOBKLSopRO5uwNwtY=",
 			"path": "github.com/qnib/qwatch/cmd",
-			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
-			"revisionTime": "2017-02-03T17:53:38Z"
+			"revision": "0029c65cd0b8bc5942e272cabc95a0212bf32b8d",
+			"revisionTime": "2017-02-04T08:30:33Z"
 		},
 		{
 			"checksumSHA1": "q7ruqoKbIUwB37pMF2rRsgG3OEE=",
 			"path": "github.com/qnib/qwatch/filters",
-			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
-			"revisionTime": "2017-02-03T17:53:38Z"
+			"revision": "0029c65cd0b8bc5942e272cabc95a0212bf32b8d",
+			"revisionTime": "2017-02-04T08:30:33Z"
 		},
 		{
 			"checksumSHA1": "qMKvvh/VGsfaLG7hFGcQqwKY+NQ=",
 			"path": "github.com/qnib/qwatch/inputs",
-			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
-			"revisionTime": "2017-02-03T17:53:38Z"
+			"revision": "0029c65cd0b8bc5942e272cabc95a0212bf32b8d",
+			"revisionTime": "2017-02-04T08:30:33Z"
 		},
 		{
 			"checksumSHA1": "Yo984j0DN6bgmLqIsL5UmpB8xBI=",
 			"path": "github.com/qnib/qwatch/outputs",
-			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
-			"revisionTime": "2017-02-03T17:53:38Z"
+			"revision": "0029c65cd0b8bc5942e272cabc95a0212bf32b8d",
+			"revisionTime": "2017-02-04T08:30:33Z"
 		},
 		{
-<<<<<<< HEAD
-			"checksumSHA1": "KKhnsCHzt1EoIIqmsMAKwNVlo5k=",
-=======
 			"checksumSHA1": "jcyOhNTpG9sXg6bAQfzdCiR0Alo=",
 			"path": "github.com/qnib/qwatch/resources/archive",
-			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
-			"revisionTime": "2017-02-03T17:53:38Z"
+			"revision": "0029c65cd0b8bc5942e272cabc95a0212bf32b8d",
+			"revisionTime": "2017-02-04T08:30:33Z"
 		},
 		{
-			"checksumSHA1": "Mrtd8/6h9q5QJMcpNy5UFkDlZ1A=",
->>>>>>> add ImageName and parsing
+			"checksumSHA1": "//sCkBplbLbFocgqHrVEhYsObfQ=",
 			"path": "github.com/qnib/qwatch/server",
-			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
-			"revisionTime": "2017-02-03T17:53:38Z"
+			"revision": "0029c65cd0b8bc5942e272cabc95a0212bf32b8d",
+			"revisionTime": "2017-02-04T08:30:33Z"
 		},
 		{
-<<<<<<< HEAD
-			"checksumSHA1": "cG+6aL5ybnEKBHGPlDgZnEuYucY=",
-=======
-			"checksumSHA1": "bigZpFCFiSJClDovTP9YgSuWtQs=",
->>>>>>> add ImageName and parsing
+			"checksumSHA1": "A3NHrWKL9H+0vmC5dsfHNx5YgJs=",
 			"path": "github.com/qnib/qwatch/types",
-			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
-			"revisionTime": "2017-02-03T17:53:38Z"
+			"revision": "0029c65cd0b8bc5942e272cabc95a0212bf32b8d",
+			"revisionTime": "2017-02-04T08:30:33Z"
 		},
 		{
-			"checksumSHA1": "t+oufogac5n5UIL2TvbMK8Yg8wA=",
+			"checksumSHA1": "w4Bh7GoIj/Zn9SBUQ+Pw7DTmrjg=",
 			"path": "github.com/qnib/qwatch/utils",
-			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
-			"revisionTime": "2017-02-03T17:53:38Z"
+			"revision": "0029c65cd0b8bc5942e272cabc95a0212bf32b8d",
+			"revisionTime": "2017-02-04T08:30:33Z"
 		},
 		{
 			"checksumSHA1": "JXUVA1jky8ZX8w09p2t5KLs97Nc=",
