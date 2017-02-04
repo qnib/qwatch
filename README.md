@@ -2,6 +2,8 @@
 
 A golang ETL to collect, filter and output logs/events.
 
+More information of the graph backend and how it is modeled, can be found [here](Neo4j.md)
+
 ## ROADMAP
 
 ### 0.7.x (Inventory)
