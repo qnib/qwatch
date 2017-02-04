@@ -24,7 +24,7 @@ It will use the information fetched from the inputs of `qwatch` and derived inve
     - [x] Fetch and push engine `Info()`
     - [x] fetch and push `swarm.Node`
     - [ ] fetch and push `ContainerList` #22
-    - [ ] fetch and push `ImageList` #23
+    - [x] fetch and push `ImageList` #23
     - [ ] fetch and push `NetworkList` #24
     - [ ] fetch and push `VolumeList` #25
     - [ ] fetch and push `ServiceList` #26
