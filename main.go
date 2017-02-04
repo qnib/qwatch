@@ -25,7 +25,7 @@ func main() {
 	app := cli.NewApp()
 	app.Name = "qwatch"
 	app.Usage = ""
-	app.Version = "0.7.1.8"
+	app.Version = "0.7.1.9"
 	app.Commands = []cli.Command{cmd.ServerCmd}
 	app.Run(os.Args)
 
