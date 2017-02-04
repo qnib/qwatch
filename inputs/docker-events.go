@@ -83,6 +83,16 @@ func parseMessage(msg events.Message, info types.Info) qtypes.Qmsg {
 			ContainerID:   msg.ID,
 			ContainerName: msg.Actor.Attributes["name"],
 		})
+	case "network":
+		net := qtypes.NetworkInfo{
+			ID:   msg.Actor.ID,
+			Name: msg.Actor.Attributes["name"],
+			Type: msg.Actor.Attributes["type"],
+		}
+		if val, ok := msg.Actor.Attributes["container"]; ok {
+			net.ContainerID = val
+		}
+		qm.SetNetwork(net)
 	}
 	return qm
 }
