@@ -13,6 +13,7 @@ import (
 	"github.com/zpatrick/go-config"
 
 	"github.com/qnib/qwatch/types"
+	"github.com/qnib/qwatch/utils"
 )
 
 var (
@@ -38,12 +39,12 @@ func (o Neo4j) execCypher(cypher string, m map[string]interface{}) error {
 	stmt, err := o.Conn.PrepareNeo(cypher)
 	defer stmt.Close()
 	if err != nil {
-		log.Println("[EE] during PrepareNeo: ", cypher)
+		log.Printf("[EE] during PrepareNeo (%s): %s", cypher, err)
 		return err
 	}
 	_, err = stmt.ExecNeo(m)
 	if err != nil {
-		log.Println("[EE] during ExecNeo: ", err)
+		log.Printf("[EE] during ExecNeo: (%s): %s", cypher, err)
 		return err
 	}
 	return nil
@@ -117,7 +118,8 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 func (o Neo4j) handleImg(qm qtypes.Qmsg) error {
 	switch qm.Action {
 	case "pull":
-		cypher := fmt.Sprintf("MERGE (i:DockerImage {name:'%s'})", qm.Image.ID)
+		img := utils.ParseImageName(qm.Image.ID)
+		cypher := fmt.Sprintf("MERGE (i:DockerTag {name:'%s'})", img.String())
 		log.Printf("[DD] Cypher: %s", cypher)
 		return o.execCypher(cypher, nil)
 	}
@@ -139,17 +141,19 @@ func (o Neo4j) handleMsg(qm qtypes.Qmsg) error {
 func (o Neo4j) initGraph() error {
 	// https://github.com/docker/docker/blob/master/api/types/types.go#L276
 	cypher := `
-	    MERGE (:ContainerState { name:'created'})
-			MERGE (:ContainerState { name:'running'})
-			MERGE (:ContainerState { name:'paused'})
-			MERGE (:ContainerState { name:'stopped'})
-			MERGE (:ContainerState { name:'unpaused'})
-			MERGE (:ContainerState { name:'restarted'})
-			MERGE (:ContainerState { name:'killed'})
-			MERGE (:ContainerState { name:'oomkilled'})
-			MERGE (:ContainerState { name:'dead'})
-			MERGE (:ContainerState { name:'removed'})`
+        MERGE (:ContainerState { name:'created'})
+        MERGE (:ContainerState { name:'running'})
+		MERGE (:ContainerState { name:'paused'})
+		MERGE (:ContainerState { name:'stopped'})
+		MERGE (:ContainerState { name:'unpaused'})
+		MERGE (:ContainerState { name:'restarted'})
+		MERGE (:ContainerState { name:'killed'})
+		MERGE (:ContainerState { name:'oomkilled'})
+		MERGE (:ContainerState { name:'dead'})
+		MERGE (:ContainerState { name:'removed'})`
 	err := o.execCypher(cypher, nil)
+	o.execCypher("CREATE CONSTRAINT ON (i:DockerImage) ASSERT i.id IS UNIQUE", nil)
+
 	/* When implementing services
 	// https://github.com/docker/docker/blob/master/api/types/types.go#L255
 	*/
@@ -174,9 +178,8 @@ func (o Neo4j) handleInfo(i dtypes.Info) {
 }
 
 func (o Neo4j) createDockerImage(i qtypes.DockerImageSummary) {
-
 	cypher := `MATCH (de:DockerEngine {id: {engine_id}})
-	CREATE UNIQUE (de)<-[:Exists]-(i:DockerImage {id: {id}})`
+	MERGE (de)<-[:Exists]-(i:DockerImage {id: {id}})`
 	m := map[string]interface{}{"id": i.ID, "created": i.Created, "time": time.Now().UnixNano()}
 	m["engine_id"] = i.EngineID
 	err := o.execCypher(cypher, m)
@@ -184,20 +187,32 @@ func (o Neo4j) createDockerImage(i qtypes.DockerImageSummary) {
 		log.Printf("[EE] Error during image create: '%s' '%v'\n", err, m)
 	}
 	for _, repoTag := range i.RepoTags {
-		cypher := `MATCH (i:DockerImage {id: {id}})
-		CREATE UNIQUE (i)<-[:Is]-(t:ImageTag {name: {repo_tag}})`
-		m := map[string]interface{}{"id": i.ID, "repo_tag": repoTag}
+		if repoTag == "<none>:<none>" {
+			continue
+		}
+		img := utils.ParseImageName(repoTag)
+		m := map[string]interface{}{"id": i.ID, "repo_tag": img.String()}
+		cypher := `MATCH (ni:DockerImage {id: {id}})
+        MERGE (ni)<-[:IS]-(t:ImageTag {name: {repo_tag}})`
 		o.execCypher(cypher, m)
-
 	}
-	//fmt.Printf("ID:%s RepoTags:%s Labels:%s\n", i.ID, i.RepoTags, i.Labels)
 
 }
+
+func (o Neo4j) renameRelationship(id, repoTag string) {
+	// Change relationship from IS to WAS
+
+	/*cypher = `MATCH (t:ImageTag {name: {repo_tag}})
+	    MATCH (t)-[:IS]->(oi)`
+		o.execCypher(cypher, m)
+	*/
+}
+
 func (o Neo4j) handleDockerImageSummary(i qtypes.DockerImageSummary) {
 	o.createDockerImage(i)
 	if i.ParentID != "" {
 		cypher := `MATCH (de:DockerEngine {id: {engine_id}})
-		CREATE UNIQUE (de)<-[:Exists]-(i:DockerImage {id: {id}})`
+		MERGE (de)<-[:Exists]-(i:DockerImage {id: {id}})`
 		m := map[string]interface{}{"id": i.ParentID}
 		m["engine_id"] = i.EngineID
 		err := o.execCypher(cypher, m)
@@ -206,7 +221,7 @@ func (o Neo4j) handleDockerImageSummary(i qtypes.DockerImageSummary) {
 		}
 		cypher = `MATCH (i:DockerImage {id: {id}})
 		MATCH (p:DockerImage {id: {parent_id}})
-		CREATE UNIQUE (i)-[:FROM]->(p)`
+		MERGE (i)-[:PARENT]->(p)`
 		m = map[string]interface{}{"id": i.ID, "parent_id": i.ParentID}
 		m["engine_id"] = i.EngineID
 		err = o.execCypher(cypher, m)

@@ -120,20 +120,6 @@ type DockerNode struct {
 	EngineID string
 }
 
-// DockerImageSummary is a superset of swarm.Node, which passes along the ID of cli.Info
-type DockerImageSummary struct {
-	types.ImageSummary
-	EngineID string
-}
-
-func (di DockerImageSummary) String() string {
-	var name string
-	if len(di.RepoTags) > 0 {
-		name = di.RepoTags[0]
-	}
-	return fmt.Sprintf("%-20s ID:%s", name, string(di.ID[7:19]))
-}
-
 // ImageName holds information about a docker image
 type ImageName struct {
 	Registry   string
@@ -159,4 +145,18 @@ func (in *ImageName) String() string {
 		res = fmt.Sprintf("%s@sha256:%s", res, in.Sha256)
 	}
 	return res
+}
+
+// DockerImageSummary is a superset of swarm.Node, which passes along the ID of cli.Info
+type DockerImageSummary struct {
+	types.ImageSummary
+	EngineID string
+}
+
+func (di DockerImageSummary) String() string {
+	var name string
+	if len(di.RepoTags) > 0 {
+		name = di.RepoTags[0]
+	}
+	return fmt.Sprintf("%-20s ID:%s", name, string(di.ID[7:19]))
 }
