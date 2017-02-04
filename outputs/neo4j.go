@@ -204,10 +204,9 @@ func (o Neo4j) handleImg(qm qtypes.Qmsg) error {
 	}
 	return nil
 }
+
 func (o Neo4j) handleMsg(qm qtypes.Qmsg) error {
 	switch qm.Type {
-	case "image":
-		return o.handleImg(qm)
 	case "container":
 		return o.handleContainer(qm)
 	default:
@@ -337,11 +336,17 @@ func (o Neo4j) Run() {
 	}
 	bg := o.QChan.Log.Join()
 	ig := o.QChan.Inventory.Join()
+	tg := o.QChan.Tick.Join()
 	for {
 		select {
 		case val := <-bg.In:
 			log := val.(qtypes.Qmsg)
-			o.handleMsg(log)
+			if log.Type == "image" && log.Action == "pull" {
+				// When image is pulled, queryImageList should be trigged, sending initial Tick again
+				tg.Send(int64(0))
+			} else {
+				o.handleMsg(log)
+			}
 		case val := <-ig.In:
 			switch val := val.(type) {
 			case qtypes.DockerNode:
