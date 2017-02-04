@@ -282,7 +282,7 @@
 			"revisionTime": "2017-01-21T17:43:07Z"
 		},
 		{
-			"checksumSHA1": "ukqvrnWFZ9JVLVBJYCITNxqdDy0=",
+			"checksumSHA1": "JsLmMuChoRR+g+u5Hs+k5WTkEEg=",
 			"path": "github.com/qnib/qwatch",
 			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
 			"revisionTime": "2017-02-03T17:53:38Z"
@@ -312,19 +312,33 @@
 			"revisionTime": "2017-02-03T17:53:38Z"
 		},
 		{
+<<<<<<< HEAD
 			"checksumSHA1": "KKhnsCHzt1EoIIqmsMAKwNVlo5k=",
+=======
+			"checksumSHA1": "jcyOhNTpG9sXg6bAQfzdCiR0Alo=",
+			"path": "github.com/qnib/qwatch/resources/archive",
+			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
+			"revisionTime": "2017-02-03T17:53:38Z"
+		},
+		{
+			"checksumSHA1": "Mrtd8/6h9q5QJMcpNy5UFkDlZ1A=",
+>>>>>>> add ImageName and parsing
 			"path": "github.com/qnib/qwatch/server",
 			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
 			"revisionTime": "2017-02-03T17:53:38Z"
 		},
 		{
+<<<<<<< HEAD
 			"checksumSHA1": "cG+6aL5ybnEKBHGPlDgZnEuYucY=",
+=======
+			"checksumSHA1": "bigZpFCFiSJClDovTP9YgSuWtQs=",
+>>>>>>> add ImageName and parsing
 			"path": "github.com/qnib/qwatch/types",
 			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
 			"revisionTime": "2017-02-03T17:53:38Z"
 		},
 		{
-			"checksumSHA1": "7I9Zu2vGpoLfwRjvZgDiwJvWRcc=",
+			"checksumSHA1": "t+oufogac5n5UIL2TvbMK8Yg8wA=",
 			"path": "github.com/qnib/qwatch/utils",
 			"revision": "bc73fe4587d015cf562fb45baf8e52bf4fc7d925",
 			"revisionTime": "2017-02-03T17:53:38Z"

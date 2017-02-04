@@ -133,3 +133,30 @@ func (di DockerImageSummary) String() string {
 	}
 	return fmt.Sprintf("%-20s ID:%s", name, string(di.ID[7:19]))
 }
+
+// ImageName holds information about a docker image
+type ImageName struct {
+	Registry   string
+	Repository string
+	Name       string
+	Tag        string
+	Sha256     string
+}
+
+func (in *ImageName) String() string {
+	l := []string{in.Registry, in.Repository, in.Name}
+	nl := l[:0]
+	for _, x := range l {
+		if x != "" {
+			nl = append(nl, x)
+		}
+	}
+	res := strings.Join(nl, "/")
+	if in.Tag != "" {
+		res = fmt.Sprintf("%s:%s", res, in.Tag)
+	}
+	if in.Sha256 != "" {
+		res = fmt.Sprintf("%s@sha256:%s", res, in.Sha256)
+	}
+	return res
+}
