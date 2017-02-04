@@ -3,6 +3,7 @@ package qoutput
 import (
 	"fmt"
 	"log"
+	"os"
 	"reflect"
 	"time"
 
@@ -63,7 +64,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 			log.Println("[EE] during ExecCypher: ", err)
 			return err
 		}
-		cypher = "MATCH (c:Container {container_id: {container_id}}) MERGE (i:Image {id: {image_id}}) CREATE (c)-[:USE {time: {time}}]->(i)"
+		cypher = "MATCH (c:Container {container_id: {container_id}}) MERGE (i:DockerImage {id: {image_id}}) CREATE (c)-[:USE {time: {time}}]->(i)"
 		m = map[string]interface{}{"container_id": qm.Container.ContainerID, "image_id": qm.Container.ImageName, "time": qm.TimeNano}
 		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
 		return o.execCypher(cypher, m)
@@ -116,7 +117,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 func (o Neo4j) handleImg(qm qtypes.Qmsg) error {
 	switch qm.Action {
 	case "pull":
-		cypher := fmt.Sprintf("MERGE (i:Image {id:'%s'})", qm.Image.ID)
+		cypher := fmt.Sprintf("MERGE (i:DockerImage {name:'%s'})", qm.Image.ID)
 		log.Printf("[DD] Cypher: %s", cypher)
 		return o.execCypher(cypher, nil)
 	}
@@ -172,6 +173,50 @@ func (o Neo4j) handleInfo(i dtypes.Info) {
 	}
 }
 
+func (o Neo4j) createDockerImage(i qtypes.DockerImageSummary) {
+
+	cypher := `MATCH (de:DockerEngine {id: {engine_id}})
+	CREATE UNIQUE (de)<-[:Exists]-(i:DockerImage {id: {id}})`
+	m := map[string]interface{}{"id": i.ID, "created": i.Created, "time": time.Now().UnixNano()}
+	m["engine_id"] = i.EngineID
+	err := o.execCypher(cypher, m)
+	if err != nil {
+		log.Printf("[EE] Error during image create: '%s' '%v'\n", err, m)
+	}
+	for _, repoTag := range i.RepoTags {
+		cypher := `MATCH (i:DockerImage {id: {id}})
+		CREATE UNIQUE (i)<-[:Is]-(t:ImageTag {name: {repo_tag}})`
+		m := map[string]interface{}{"id": i.ID, "repo_tag": repoTag}
+		o.execCypher(cypher, m)
+
+	}
+	//fmt.Printf("ID:%s RepoTags:%s Labels:%s\n", i.ID, i.RepoTags, i.Labels)
+
+}
+func (o Neo4j) handleDockerImageSummary(i qtypes.DockerImageSummary) {
+	o.createDockerImage(i)
+	if i.ParentID != "" {
+		cypher := `MATCH (de:DockerEngine {id: {engine_id}})
+		CREATE UNIQUE (de)<-[:Exists]-(i:DockerImage {id: {id}})`
+		m := map[string]interface{}{"id": i.ParentID}
+		m["engine_id"] = i.EngineID
+		err := o.execCypher(cypher, m)
+		if err != nil {
+			log.Printf("[EE] Error during image create: '%s' '%v'\n", err, m)
+		}
+		cypher = `MATCH (i:DockerImage {id: {id}})
+		MATCH (p:DockerImage {id: {parent_id}})
+		CREATE UNIQUE (i)-[:FROM]->(p)`
+		m = map[string]interface{}{"id": i.ID, "parent_id": i.ParentID}
+		m["engine_id"] = i.EngineID
+		err = o.execCypher(cypher, m)
+		if err != nil {
+			log.Printf("[EE] Error during handleSwarmNode: '%s' '%v'\n", err, m)
+			os.Exit(1)
+		}
+	}
+}
+
 func (o Neo4j) handleSwarmNode(n qtypes.DockerNode) {
 	cypher := `
 	MATCH (d:DockerEngine {id:{engine_id}})
@@ -216,6 +261,8 @@ func (o Neo4j) Run() {
 			switch val := val.(type) {
 			case qtypes.DockerNode:
 				o.handleSwarmNode(val)
+			case qtypes.DockerImageSummary:
+				o.handleDockerImageSummary(val)
 			case dtypes.Info:
 				o.handleInfo(val)
 			default:
