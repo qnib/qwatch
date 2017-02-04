@@ -46,7 +46,7 @@ func (de DockerAPI) Run() {
 		select {
 		case t := <-tick.In:
 			de.querySwarm(t)
-			de.queryImages(t)
+			//de.queryImages(t)
 		}
 	}
 }

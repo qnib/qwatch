@@ -50,6 +50,58 @@ func (o Neo4j) execCypher(cypher string, m map[string]interface{}) error {
 	return nil
 }
 
+func (o Neo4j) handleNetwork(qm qtypes.Qmsg) error {
+	switch qm.Action {
+	case "create":
+		cypher := `MATCH (s:NetworkState {name: 'created'})
+        MATCH (de:DockerEngine {id:{engine_id}})
+        MATCH (t:DockerNetworkDriver {name: {network_type}})
+        CREATE (n:DockerNetwork {name: {name}, id: {network_id}, created: {time}})
+			MERGE (de)<-[:PartOf]-(n)<-[:IS {created: {time}}]-(s)
+            MERGE (n)-[:IS]->(t)`
+		m := map[string]interface{}{"name": qm.Network.Name, "time": qm.TimeNano}
+		m["network_id"] = qm.Network.ID
+		m["network_type"] = qm.Network.Type
+		m["engine_id"] = qm.EngineID
+		err := o.execCypher(cypher, m)
+		if err != nil {
+			return err
+		}
+	case "destroy":
+		cypher := `MATCH (c:NetworkState {name: 'created'})
+            MATCH (r:NetworkState {name: 'removed'})
+            MATCH (n:DockerNetwork {id: {network_id}})
+            MATCH (n)<-[rel:IS]-(c)
+                CREATE (n)<-[:WAS {created: rel.created, removed: {time}}]-(c)
+                CREATE (n)<-[:WAS {removed: {time}}]-(r)
+                DELETE rel`
+		m := map[string]interface{}{"name": qm.Network.Name, "time": qm.TimeNano}
+		m["network_id"] = qm.Network.ID
+		m["engine_id"] = qm.EngineID
+		err := o.execCypher(cypher, m)
+		if err != nil {
+			return err
+		}
+	case "connect":
+		cypher := `
+        MATCH (n:DockerNetwork {id: {network_id}})
+        MATCH (c:Container {container_id: {container_id}})
+            CREATE (c)-[:CONNECTED {created: {time}}]->(n)
+        `
+		m := map[string]interface{}{"name": qm.Network.Name, "time": qm.TimeNano}
+		m["network_id"] = qm.Network.ID
+		m["container_id"] = qm.Network.ContainerID
+		m["engine_id"] = qm.EngineID
+		err := o.execCypher(cypher, m)
+		if err != nil {
+			return err
+		}
+	default:
+		log.Printf("do not understand network-action: %s", qm.Action)
+	}
+	return nil
+}
+
 func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 	switch qm.Action {
 	case "create":
@@ -209,6 +261,8 @@ func (o Neo4j) handleMsg(qm qtypes.Qmsg) error {
 	switch qm.Type {
 	case "container":
 		return o.handleContainer(qm)
+	case "network":
+		return o.handleNetwork(qm)
 	default:
 		log.Printf("[II] Type is not recognized: %s", qm.Type)
 		return nil
@@ -219,6 +273,13 @@ func (o Neo4j) handleMsg(qm qtypes.Qmsg) error {
 func (o Neo4j) initGraph() error {
 	// https://github.com/docker/docker/blob/master/api/types/types.go#L276
 	cypher := `
+        MERGE (:NetworkState { name:'created'})
+        MERGE (:NetworkState { name:'removed'})
+        MERGE (:DockerNetworkDriver {name: 'bridge'})
+        MERGE (:DockerNetworkDriver {name: 'overlay'})
+        MERGE (:DockerNetworkDriver {name: 'swarm'})
+        MERGE (:DockerNetworkDriver {name: 'host'})
+        MERGE (:DockerNetworkDriver {name: 'null'})
         MERGE (:ContainerState { name:'created'})
         MERGE (:ContainerState { name:'running'})
 		MERGE (:ContainerState { name:'paused'})
@@ -231,6 +292,7 @@ func (o Neo4j) initGraph() error {
 		MERGE (:ContainerState { name:'removed'})`
 	err := o.execCypher(cypher, nil)
 	o.execCypher("CREATE CONSTRAINT ON (i:DockerImage) ASSERT i.id IS UNIQUE", nil)
+	o.execCypher("CREATE CONSTRAINT ON (i:DockerNetwork) ASSERT i.id IS UNIQUE", nil)
 
 	/* When implementing services
 	// https://github.com/docker/docker/blob/master/api/types/types.go#L255

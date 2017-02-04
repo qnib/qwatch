@@ -25,6 +25,14 @@ type ImageInfo struct {
 	ID   string `json:"_image_id"`
 }
 
+// NetworkInfo holds information about network events
+type NetworkInfo struct {
+	Name        string `json:"_name"`
+	ID          string `json:"_id"`
+	ContainerID string `json:"_container_id"`
+	Type        string `json:"_type"`
+}
+
 // ContainerInfo holds information when the message was emmited by a container
 type ContainerInfo struct {
 	Command       string `json:"_command"`
@@ -56,6 +64,7 @@ type Qmsg struct {
 	IsContainer bool          `json:"is_container"`
 	Container   ContainerInfo `json:"container"`
 	Image       ImageInfo     `json:"container"`
+	Network     NetworkInfo   `json:"network"`
 	EngineID    string        `json:"engine_id"`
 }
 
@@ -99,6 +108,12 @@ func NewQmsg(source, msg, host string) Qmsg {
 func (qm *Qmsg) SetContainer(cnt ContainerInfo) Qmsg {
 	qm.IsContainer = true
 	qm.Container = cnt
+	return *qm
+}
+
+// SetNetwork sets information about the network
+func (qm *Qmsg) SetNetwork(net NetworkInfo) Qmsg {
+	qm.Network = net
 	return *qm
 }
 
