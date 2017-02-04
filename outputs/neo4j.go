@@ -59,56 +59,135 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 		m := map[string]interface{}{"name": qm.Container.ContainerName, "time": qm.TimeNano}
 		m["container_id"] = qm.Container.ContainerID
 		m["engine_id"] = qm.EngineID
-		log.Printf("[DD] Cypher: '%s', map:'%v'", cypher, m)
 		err := o.execCypher(cypher, m)
 		if err != nil {
 			log.Println("[EE] during ExecCypher: ", err)
 			return err
 		}
-		cypher = "MATCH (c:Container {container_id: {container_id}}) MERGE (i:DockerImage {id: {image_id}}) CREATE (c)-[:USE {time: {time}}]->(i)"
-		m = map[string]interface{}{"container_id": qm.Container.ContainerID, "image_id": qm.Container.ImageName, "time": qm.TimeNano}
-		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
-		return o.execCypher(cypher, m)
+		log.Printf("[DD] Created '%s'", qm.Container.ContainerID)
+		cypher = `MATCH (c:Container {container_id: {container_id}})
+            MATCH (i:DockerImage {name: {img_name}})
+            MERGE (c)-[:USE {created: {time}}]->(i)`
+		imgName := utils.ParseImageName(qm.Container.ImageName)
+		m = map[string]interface{}{"container_id": qm.Container.ContainerID, "img_name": imgName.String(), "time": qm.TimeNano}
+		err = o.execCypher(cypher, m)
+		if err != nil {
+			log.Printf("[WW] Linked '%s' to Image '%s' failed", qm.Container.ContainerID, imgName.String())
+		} else {
+			log.Printf("[DD] Created '%s'", qm.Container.ContainerID)
+		}
+		return err
 	case "start":
-		cypher := "MATCH (s:ContainerState {name: 'running'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
+		cypher := `MATCH (s:ContainerState {name: 'running'})
+        MATCH (c:Container {container_id: {container_id}})
+            CREATE (c)<-[:IS {created: {time}}]-(s)`
 		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
-		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
-		return o.execCypher(cypher, m)
+		err := o.execCypher(cypher, m)
+		if err != nil {
+			log.Printf("[WW] Start '%s' failed", qm.Container.ContainerID)
+		} else {
+			log.Printf("[DD] Started '%s'", qm.Container.ContainerID)
+		}
+		return err
 	case "die":
-		cypher := "MATCH (s:ContainerState {name: 'dead'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
+		cypher := `
+        MATCH (d:ContainerState {name: 'dead'})
+        MATCH (r:ContainerState {name: 'running'})
+        MATCH (c:Container {container_id: {container_id}})
+        MATCH (c)<-[rel:IS]-(r)
+            CREATE (c)<-[:WAS {destroyed: {time}, created: rel.created}]-(r)
+            CREATE (c)<-[:IS {created: {time}}]-(d)
+            DELETE rel`
 		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
-		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
-		return o.execCypher(cypher, m)
+		err := o.execCypher(cypher, m)
+		if err != nil {
+			log.Printf("[WW] Killed '%s' failed", qm.Container.ContainerID)
+		} else {
+			log.Printf("[DD] Killed '%s'", qm.Container.ContainerID)
+		}
+		return err
 	case "pause":
-		cypher := "MATCH (s:ContainerState {name: 'paused'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
+		cypher := `
+        MATCH (p:ContainerState {name: 'paused'})
+        MATCH (r:ContainerState {name: 'running'})
+        MATCH (c:Container {container_id: {container_id}})
+        MATCH (c)<-[rel:IS]-(r)
+            CREATE (c)<-[:WAS {removed: {time}, created: rel.created}]-(r)
+            CREATE (c)<-[:IS {created: {time}}]-(p)
+            DELETE rel`
 		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
-		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
-		return o.execCypher(cypher, m)
+		err := o.execCypher(cypher, m)
+		if err != nil {
+			log.Printf("[WW] Paused '%s' failed", qm.Container.ContainerID)
+		} else {
+			log.Printf("[DD] Paused '%s'", qm.Container.ContainerID)
+		}
+		return err
 	case "kill":
-		cypher := "MATCH (s:ContainerState {name: 'killed'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
+		cypher := `
+        MATCH (s:ContainerState {name: 'killed'})
+        MATCH (c:Container {container_id: {container_id}})
+        MATCH (r:ContainerState {name: 'running'})
+        MATCH (c)<-[rel:IS]-(r)
+            CREATE (c)<-[:IS {created: {time}}]-(s)
+            CREATE (c)<-[:WAS {removed: {time}, created: rel.created}]-(r)
+            DELETE rel`
 		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
-		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
-		return o.execCypher(cypher, m)
+		err := o.execCypher(cypher, m)
+		if err != nil {
+			log.Printf("[WW] Killed '%s' failed", qm.Container.ContainerID)
+		} else {
+			log.Printf("[DD] Killed '%s'", qm.Container.ContainerID)
+		}
+		return err
 	case "stop":
-		cypher := "MATCH (s:ContainerState {name: 'stopped'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
+		cypher := "MATCH (s:ContainerState {name: 'stopped'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {created: {time}}]-(s)"
 		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
-		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
-		return o.execCypher(cypher, m)
+		err := o.execCypher(cypher, m)
+		if err != nil {
+			log.Printf("[WW] Stoped '%s' failed", qm.Container.ContainerID)
+		} else {
+			log.Printf("[DD] Stoped '%s'", qm.Container.ContainerID)
+		}
+		return err
 	case "restart":
-		cypher := "MATCH (s:ContainerState {name: 'restarted'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
+		cypher := "MATCH (s:ContainerState {name: 'restarted'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {created: {time}}]-(s)"
 		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
-		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
-		return o.execCypher(cypher, m)
+		err := o.execCypher(cypher, m)
+		if err != nil {
+			log.Printf("[WW] Restarted '%s' failed", qm.Container.ContainerID)
+		} else {
+			log.Printf("[DD] Restarted '%s'", qm.Container.ContainerID)
+		}
+		return err
 	case "unpause":
 		cypher := "MATCH (s:ContainerState {name: 'unpaused'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
 		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
-		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
-		return o.execCypher(cypher, m)
+		err := o.execCypher(cypher, m)
+		if err != nil {
+			log.Printf("[WW] Unpaused '%s' failed", qm.Container.ContainerID)
+		} else {
+			log.Printf("[DD] Unpaused '%s'", qm.Container.ContainerID)
+		}
+		return err
 	case "destroy":
-		cypher := "MATCH (s:ContainerState {name: 'removed'}) MATCH (c:Container {container_id: {container_id}}) SET c.destroyed={time} CREATE (c)<-[:IS {time: {time}}]-(s)"
+		cypher := `
+            MATCH (rm:ContainerState {name: 'removed'})
+            MATCH (cr:ContainerState {name: 'created'})
+            MATCH (c:Container {container_id: {container_id}})
+            MATCH (c)<-[rel:IS]-(cr)
+                SET c.destroyed={time}
+                CREATE (c)<-[:WAS {removed: {time}, created: rel.created}]-(cr)
+                CREATE (c)<-[:WAS {created: {time}}]-(rm)
+                DELETE rel`
 		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
-		log.Printf("[DD] Cypher: %s, map:%v", cypher, m)
-		return o.execCypher(cypher, m)
+		err := o.execCypher(cypher, m)
+		if err != nil {
+			log.Printf("[WW] Destoyed '%s' failed", qm.Container.ContainerID)
+		} else {
+			log.Printf("[DD] Destoyed '%s'", qm.Container.ContainerID)
+		}
+		return err
 	default:
 		log.Printf("[II] Action is not recognized: %s", qm.Action)
 		return nil
@@ -197,15 +276,6 @@ func (o Neo4j) createDockerImage(i qtypes.DockerImageSummary) {
 		o.execCypher(cypher, m)
 	}
 
-}
-
-func (o Neo4j) renameRelationship(id, repoTag string) {
-	// Change relationship from IS to WAS
-
-	/*cypher = `MATCH (t:ImageTag {name: {repo_tag}})
-	    MATCH (t)-[:IS]->(oi)`
-		o.execCypher(cypher, m)
-	*/
 }
 
 func (o Neo4j) handleDockerImageSummary(i qtypes.DockerImageSummary) {
