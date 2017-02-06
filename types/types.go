@@ -180,6 +180,12 @@ type DockerInfo struct {
 	Info types.Info
 }
 
+// DockerVolume is a superset, which passes along the Info
+type DockerVolume struct {
+	types.Volume
+	Info types.Info
+}
+
 // DockerNetworkResource is a superset, which passes along the Info
 type DockerNetworkResource struct {
 	types.NetworkResource

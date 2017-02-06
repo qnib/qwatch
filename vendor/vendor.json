@@ -269,26 +269,26 @@
 		{
 			"checksumSHA1": "BtrZQiWcpX1ctKsFCP3wKded+g8=",
 			"path": "github.com/qnib/qwatch",
-			"revision": "6cbb75237bb0b77e50f7d28c3b0c595bd9c6278e",
-			"revisionTime": "2017-02-07T03:03:11Z"
+			"revision": "e39fb81da5bbabe54795abacdba46c0a504b4ae0",
+			"revisionTime": "2017-02-07T03:26:28Z"
 		},
 		{
 			"checksumSHA1": "jrYh6iShPLrNpSOJmVPB+Jp8QGs=",
 			"path": "github.com/qnib/qwatch/cmd",
-			"revision": "6cbb75237bb0b77e50f7d28c3b0c595bd9c6278e",
-			"revisionTime": "2017-02-07T03:03:11Z"
+			"revision": "e39fb81da5bbabe54795abacdba46c0a504b4ae0",
+			"revisionTime": "2017-02-07T03:26:28Z"
 		},
 		{
 			"checksumSHA1": "q7ruqoKbIUwB37pMF2rRsgG3OEE=",
 			"path": "github.com/qnib/qwatch/filters",
-			"revision": "6cbb75237bb0b77e50f7d28c3b0c595bd9c6278e",
-			"revisionTime": "2017-02-07T03:03:11Z"
+			"revision": "e39fb81da5bbabe54795abacdba46c0a504b4ae0",
+			"revisionTime": "2017-02-07T03:26:28Z"
 		},
 		{
-			"checksumSHA1": "QocU44o51bIxEbceBagpg+EheXA=",
+			"checksumSHA1": "ibTIhaMKFLsyzK3t7eH8YYY5glE=",
 			"path": "github.com/qnib/qwatch/inputs",
-			"revision": "6cbb75237bb0b77e50f7d28c3b0c595bd9c6278e",
-			"revisionTime": "2017-02-07T03:03:11Z"
+			"revision": "e39fb81da5bbabe54795abacdba46c0a504b4ae0",
+			"revisionTime": "2017-02-07T03:26:28Z"
 		},
 		{
 			"checksumSHA1": "aMzl6iJKOYDXRaem3Dk4ImYUF/M=",
@@ -297,28 +297,46 @@
 			"revisionTime": "2017-02-06T18:46:09Z"
 		},
 		{
-			"checksumSHA1": "xuCevzylZYt5ONWsbEcghjiqEkg=",
+			"checksumSHA1": "ibTIhaMKFLsyzK3t7eH8YYY5glE=",
+			"path": "github.com/qnib/qwatch/inputs",
+			"revision": "cd6b1ddbc49bae3ac95030b7f9275d2040b6dbd3",
+			"revisionTime": "2017-02-06T19:09:18Z"
+		},
+		{
+			"checksumSHA1": "rbQMlKlnzLbTXKTZR07uRaCYTqg=",
 			"path": "github.com/qnib/qwatch/outputs",
-			"revision": "6cbb75237bb0b77e50f7d28c3b0c595bd9c6278e",
-			"revisionTime": "2017-02-07T03:03:11Z"
+			"revision": "e39fb81da5bbabe54795abacdba46c0a504b4ae0",
+			"revisionTime": "2017-02-07T03:26:28Z"
+		},
+		{
+			"checksumSHA1": "O089TtSrM3WTDRI8rC87FON+1js=",
+			"path": "github.com/qnib/qwatch/outputs",
+			"revision": "58757ec4e26af76f2e3bfcc8f55fcd2b7228cc71",
+			"revisionTime": "2017-02-06T18:00:01Z"
+		},
+		{
+			"checksumSHA1": "FsRqh4smKUTU95mVqyIcTiYPdwU=",
+			"path": "github.com/qnib/qwatch/outputs",
+			"revision": "cd6b1ddbc49bae3ac95030b7f9275d2040b6dbd3",
+			"revisionTime": "2017-02-06T19:09:18Z"
 		},
 		{
 			"checksumSHA1": "jcyOhNTpG9sXg6bAQfzdCiR0Alo=",
 			"path": "github.com/qnib/qwatch/resources/archive",
-			"revision": "6cbb75237bb0b77e50f7d28c3b0c595bd9c6278e",
-			"revisionTime": "2017-02-07T03:03:11Z"
+			"revision": "e39fb81da5bbabe54795abacdba46c0a504b4ae0",
+			"revisionTime": "2017-02-07T03:26:28Z"
 		},
 		{
 			"checksumSHA1": "QAWgNhd0m8BWPHsgt87q/pxJaIk=",
 			"path": "github.com/qnib/qwatch/server",
-			"revision": "6cbb75237bb0b77e50f7d28c3b0c595bd9c6278e",
-			"revisionTime": "2017-02-07T03:03:11Z"
+			"revision": "e39fb81da5bbabe54795abacdba46c0a504b4ae0",
+			"revisionTime": "2017-02-07T03:26:28Z"
 		},
 		{
-			"checksumSHA1": "KJ5YTZ31J/OZGbURd/TYc/1uXZA=",
+			"checksumSHA1": "ba0W5i+kSXBKFX6eU4x3GBnTqCc=",
 			"path": "github.com/qnib/qwatch/types",
-			"revision": "6cbb75237bb0b77e50f7d28c3b0c595bd9c6278e",
-			"revisionTime": "2017-02-07T03:03:11Z"
+			"revision": "e39fb81da5bbabe54795abacdba46c0a504b4ae0",
+			"revisionTime": "2017-02-07T03:26:28Z"
 		},
 		{
 			"checksumSHA1": "h42BUPFa8GrGI5dJlHkbVpE4Ph0=",
@@ -327,10 +345,16 @@
 			"revisionTime": "2017-02-06T18:46:09Z"
 		},
 		{
+			"checksumSHA1": "ba0W5i+kSXBKFX6eU4x3GBnTqCc=",
+			"path": "github.com/qnib/qwatch/types",
+			"revision": "c6eb9ee7603deb424cf49ea192cc3173e319518c",
+			"revisionTime": "2017-02-07T03:18:14Z"
+		},
+		{
 			"checksumSHA1": "w4Bh7GoIj/Zn9SBUQ+Pw7DTmrjg=",
 			"path": "github.com/qnib/qwatch/utils",
-			"revision": "6cbb75237bb0b77e50f7d28c3b0c595bd9c6278e",
-			"revisionTime": "2017-02-07T03:03:11Z"
+			"revision": "e39fb81da5bbabe54795abacdba46c0a504b4ae0",
+			"revisionTime": "2017-02-07T03:26:28Z"
 		},
 		{
 			"checksumSHA1": "gAhLoEQbazL8ZNWQzA9ch/8kB/s=",

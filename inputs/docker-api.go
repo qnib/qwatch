@@ -7,6 +7,7 @@ import (
 	"golang.org/x/net/context"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/filters"
 
 	"github.com/docker/docker/client"
 	"github.com/zpatrick/go-config"
@@ -48,6 +49,7 @@ func (de DockerAPI) Run() {
 			de.querySwarm(t)
 			de.queryImages(t)
 			de.queryNetworks(t)
+			de.queryVolumes(t)
 			de.queryContainers(t)
 			de.queryServices(t)
 			de.queryTasks(t)
@@ -105,6 +107,7 @@ func (de DockerAPI) queryNetworks(t interface{}) {
 		}
 	}
 }
+
 func (de DockerAPI) queryImages(t interface{}) {
 	imgTick, _ := de.Cfg.Int("input.docker-api.images.tick")
 	tick := float64(t.(int64))
@@ -120,6 +123,29 @@ func (de DockerAPI) queryImages(t interface{}) {
 			qimg.ImageSummary = image
 			qimg.EngineID = de.info.ID
 			de.QChan.Inventory.Send(*qimg)
+		}
+	}
+}
+
+func (de DockerAPI) queryVolumes(t interface{}) {
+	volTick, _ := de.Cfg.Int("input.docker-api.volumes.tick")
+	tick := float64(t.(int64))
+	if !(tick == 0 || math.Mod(tick, float64(volTick)) == 0) {
+		return
+	}
+	info, err := de.cli.Info(context.Background())
+	if err != nil {
+		log.Printf("[EE] Error during Info(): ", err)
+	}
+	vols, err := de.cli.VolumeList(context.Background(), filters.Args{})
+	if err != nil {
+		log.Printf("[EE] Error during ImageList(): ", err)
+	} else {
+		for _, vol := range vols.Volumes {
+			qvol := new(qtypes.DockerVolume)
+			qvol.Volume = *vol
+			qvol.Info = info
+			de.QChan.Inventory.Send(*qvol)
 		}
 	}
 }
