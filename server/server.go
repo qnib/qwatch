@@ -90,6 +90,9 @@ func ServeQlog(ctx *cli.Context) error {
 	//cfo.PrintGraph()
 	// Inserts tick to get Inventory started
 	var tickCnt int64
+	var endTick int64
+	eTick, _ := cfg.Int("ticks")
+	endTick = int64(eTick)
 	qC.Tick.Send(tickCnt)
 	time.Sleep(100 * time.Millisecond)
 	for {
@@ -99,6 +102,10 @@ func ServeQlog(ctx *cli.Context) error {
 			return nil
 		case <-ticker:
 			tickCnt++
+			if endTick != 0 && tickCnt == endTick {
+				log.Printf("[II] End loop as tick-cnt '%d' reaches ticks '%d'", tickCnt, endTick)
+				return nil
+			}
 			qC.Tick.Send(tickCnt)
 		}
 	}

@@ -162,9 +162,15 @@ func (in *ImageName) String() string {
 	return res
 }
 
-// DockerImageSummary is a superset of swarm.Node, which passes along the ID of cli.Info
+// DockerImageSummary is a superset of types.ImageSummary, which passes along the EngineID
 type DockerImageSummary struct {
 	types.ImageSummary
+	EngineID string
+}
+
+// DockerContainer is a superset of types.Container, which passes along the EngineID
+type DockerContainer struct {
+	types.Container
 	EngineID string
 }
 

@@ -15,6 +15,11 @@ var ServerCmd = cli.Command{
 			Value: "qwatch.yml",
 			Usage: "Config file, will overwrite flag default if present.",
 		},
+		cli.IntFlag{
+			Name:  "ticks",
+			Value: 0,
+			Usage: "Ticks to endure until the script ends; if 0 -> loop infintely",
+		},
 		cli.StringFlag{
 			Name:  "inputs",
 			Value: "gelf",

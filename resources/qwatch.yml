@@ -1,5 +1,5 @@
 ticker:
-    interval: 15000
+    interval: 5000
 inputs: "docker-gelf,docker-api,docker-events"
 handlers: "log,neo4j"
 input:
@@ -8,8 +8,10 @@ input:
         host: 0.0.0.0
     docker-api:
         images:
-          tick: 15
+            tick: 15
         swarm:
-          tick: 1
+            tick: 15
         services:
-          tick: 1
+            tick: 10
+        containers:
+            tick: 1

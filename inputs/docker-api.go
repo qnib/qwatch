@@ -46,7 +46,8 @@ func (de DockerAPI) Run() {
 		select {
 		case t := <-tick.In:
 			de.querySwarm(t)
-			//de.queryImages(t)
+			de.queryImages(t)
+			de.queryContainers(t)
 		}
 	}
 }
@@ -85,13 +86,32 @@ func (de DockerAPI) queryImages(t interface{}) {
 	}
 	images, err := de.cli.ImageList(context.Background(), types.ImageListOptions{All: true})
 	if err != nil {
-		log.Printf("[EE] Error during NodeList(): ", err)
+		log.Printf("[EE] Error during ImageList(): ", err)
 	} else {
 		for _, image := range images {
 			qimg := new(qtypes.DockerImageSummary)
 			qimg.ImageSummary = image
 			qimg.EngineID = de.info.ID
 			de.QChan.Inventory.Send(*qimg)
+		}
+	}
+}
+
+func (de DockerAPI) queryContainers(t interface{}) {
+	imgTick, _ := de.Cfg.Int("input.docker-api.containers.tick")
+	tick := float64(t.(int64))
+	if !(tick == 0 || math.Mod(tick, float64(imgTick)) == 0) {
+		return
+	}
+	containers, err := de.cli.ContainerList(context.Background(), types.ContainerListOptions{All: true})
+	if err != nil {
+		log.Printf("[EE] Error during ContainerList(): ", err)
+	} else {
+		for _, container := range containers {
+			qcnt := new(qtypes.DockerContainer)
+			qcnt.Container = container
+			qcnt.EngineID = de.info.ID
+			de.QChan.Inventory.Send(*qcnt)
 		}
 	}
 }
