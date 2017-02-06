@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/deckarep/golang-set"
-	dtypes "github.com/docker/docker/api/types"
 	bolt "github.com/johnnadratowski/golang-neo4j-bolt-driver"
 	"github.com/zpatrick/go-config"
 
@@ -86,7 +85,7 @@ func (o Neo4j) handleNetwork(qm qtypes.Qmsg) error {
 	case "connect":
 		cypher := `
         MATCH (n:DockerNetwork {id: {network_id}})
-        MATCH (c:Container {container_id: {container_id}})
+        MATCH (c:Container {id: {container_id}})
             CREATE (c)-[:CONNECTED {created: {time}}]->(n)
         `
 		m := map[string]interface{}{"name": qm.Network.Name, "time": qm.TimeNano}
@@ -108,7 +107,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 	case "create":
 		cypher := `
 		MATCH (s:ContainerState {name: 'created'}) MATCH (de:DockerEngine {id:{engine_id}})
-			CREATE UNIQUE (de)<-[:PartOf]-(c:Container {container_id: {container_id}, created: {time}})<-[:IS {created: {time}}]-(s)`
+			CREATE UNIQUE (de)<-[:PartOf]-(c:Container {id: {container_id}, created: {time}})<-[:IS {created: {time}}]-(s)`
 		m := map[string]interface{}{"name": qm.Container.ContainerName, "time": qm.TimeNano}
 		m["container_id"] = qm.Container.ContainerID
 		m["engine_id"] = qm.EngineID
@@ -117,7 +116,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 			log.Println("[EE] during ExecCypher: ", err)
 			return err
 		}
-		cypher = `MATCH (c:Container {container_id:{container_id}})
+		cypher = `MATCH (c:Container {id:{container_id}})
         MERGE (n:ContainerName {name: {container_name}})
         MERGE (n)<-[i:IS]-(c)
             ON MATCH SET i.last_seen={time}
@@ -128,7 +127,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 			log.Printf("[EE] Error during handleInventoryContainer: '%s' '%v'\n", err, m)
 		}
 		log.Printf("[DD] Created '%s'", qm.Container.ContainerID)
-		cypher = `MATCH (c:Container {container_id: {container_id}})
+		cypher = `MATCH (c:Container {id: {container_id}})
             MATCH (i:DockerImage {id: {img_name}})
             MERGE (c)-[:USE {created: {time}}]->(i)`
 		m = map[string]interface{}{"container_id": qm.Container.ContainerID}
@@ -143,7 +142,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 		return err
 	case "start":
 		cypher := `MATCH (s:ContainerState {name: 'running'})
-        MATCH (c:Container {container_id: {container_id}})
+        MATCH (c:Container {id: {container_id}})
             CREATE (c)<-[:IS {created: {time}}]-(s)`
 		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
 		err := o.execCypher(cypher, m)
@@ -157,7 +156,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 		cypher := `
         MATCH (d:ContainerState {name: 'dead'})
         MATCH (r:ContainerState {name: 'running'})
-        MATCH (c:Container {container_id: {container_id}})
+        MATCH (c:Container {id: {container_id}})
         MATCH (c)<-[rel:IS]-(r)
             CREATE (c)<-[:WAS {destroyed: {time}, created: rel.created}]-(r)
             CREATE (c)<-[:IS {created: {time}}]-(d)
@@ -174,7 +173,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 		cypher := `
         MATCH (p:ContainerState {name: 'paused'})
         MATCH (r:ContainerState {name: 'running'})
-        MATCH (c:Container {container_id: {container_id}})
+        MATCH (c:Container {id: {container_id}})
         MATCH (c)<-[rel:IS]-(r)
             CREATE (c)<-[:WAS {removed: {time}, created: rel.created}]-(r)
             CREATE (c)<-[:IS {created: {time}}]-(p)
@@ -190,7 +189,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 	case "kill":
 		cypher := `
         MATCH (s:ContainerState {name: 'killed'})
-        MATCH (c:Container {container_id: {container_id}})
+        MATCH (c:Container {id: {container_id}})
         MATCH (r:ContainerState {name: 'running'})
         MATCH (c)<-[rel:IS]-(r)
             CREATE (c)<-[:IS {created: {time}}]-(s)
@@ -205,7 +204,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 		}
 		return err
 	case "stop":
-		cypher := "MATCH (s:ContainerState {name: 'stopped'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {created: {time}}]-(s)"
+		cypher := "MATCH (s:ContainerState {name: 'stopped'}) MATCH (c:Container {id: {container_id}}) CREATE (c)<-[:IS {created: {time}}]-(s)"
 		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
 		err := o.execCypher(cypher, m)
 		if err != nil {
@@ -215,7 +214,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 		}
 		return err
 	case "restart":
-		cypher := "MATCH (s:ContainerState {name: 'restarted'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {created: {time}}]-(s)"
+		cypher := "MATCH (s:ContainerState {name: 'restarted'}) MATCH (c:Container {id: {container_id}}) CREATE (c)<-[:IS {created: {time}}]-(s)"
 		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
 		err := o.execCypher(cypher, m)
 		if err != nil {
@@ -225,7 +224,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 		}
 		return err
 	case "unpause":
-		cypher := "MATCH (s:ContainerState {name: 'unpaused'}) MATCH (c:Container {container_id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
+		cypher := "MATCH (s:ContainerState {name: 'unpaused'}) MATCH (c:Container {id: {container_id}}) CREATE (c)<-[:IS {time: {time}}]-(s)"
 		m := map[string]interface{}{"container_id": qm.Container.ContainerID, "time": qm.TimeNano}
 		err := o.execCypher(cypher, m)
 		if err != nil {
@@ -238,7 +237,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 		cypher := `
             MATCH (rm:ContainerState {name: 'removed'})
             MATCH (cr:ContainerState {name: 'created'})
-            MATCH (c:Container {container_id: {container_id}})
+            MATCH (c:Container {id: {container_id}})
             MATCH (c)<-[rel:IS]-(cr)
                 SET c.destroyed={time}
                 CREATE (c)<-[:WAS {removed: {time}, created: rel.created}]-(cr)
@@ -262,7 +261,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 func (o Neo4j) handleInventoryContainer(c qtypes.DockerContainer) {
 	cypher := `
 	MATCH (d:DockerEngine {id:{engine_id}})
-    MERGE (c:Container {container_id:{id}})
+    MERGE (c:Container {id:{id}})
     	ON MATCH SET c.last_seen={time}
 		ON CREATE SET c.created={created},c.last_seen={time}
     MERGE (d)<-[:PartOf]-(c)`
@@ -278,8 +277,8 @@ func (o Neo4j) handleInventoryContainer(c qtypes.DockerContainer) {
 	}
 	for _, name := range c.Names {
 		name = strings.Trim(name, "/")
-		log.Printf("id:%s / name: %s / image:%s imageID:%s", c.ID, name, c.Image, c.ImageID)
-		cypher = `MATCH (c:Container {container_id:{id}})
+		//log.Printf("id:%s / name: %s / image:%s imageID:%s", c.ID, name, c.Image, c.ImageID)
+		cypher = `MATCH (c:Container {id:{id}})
         MERGE (n:ContainerName {name: {container_name}})
         MERGE (n)<-[i:IS]-(c)
             ON MATCH SET i.last_seen={time}
@@ -291,7 +290,7 @@ func (o Neo4j) handleInventoryContainer(c qtypes.DockerContainer) {
 		}
 	}
 	cypher = `
-    MATCH (c:Container {container_id:{id}})
+    MATCH (c:Container {id:{id}})
     MATCH (i:DockerImage {id: {image_id}})<-[:IS]-(t:ImageTag {name: {image_name}})
     MERGE (c)-[:USE]->(i)`
 	err = o.execCypher(cypher, m)
@@ -357,14 +356,39 @@ func (o Neo4j) initGraph() error {
 	return nil
 }
 
-func (o Neo4j) handleInfo(i dtypes.Info) {
+func (o Neo4j) handleInfo(i qtypes.DockerInfo) {
 	cypher := `
-	MERGE (n:DockerEngine {id:{id}, name:{name}})
+	MERGE (n:DockerEngine {id:{engine_id}, name:{name}})
 		ON MATCH SET n.last_seen={time}
 		ON CREATE SET n.created={time},n.last_seen={time}
 	`
-	m := map[string]interface{}{"id": i.ID, "name": i.Name}
+	m := map[string]interface{}{"engine_id": i.Info.ID, "name": i.Info.Name}
 	m["time"] = time.Now().UnixNano()
+	err := o.execCypher(cypher, m)
+	if err != nil {
+		log.Printf("[EE] Error during handleInfo: '%s' '%v'\n", err, i)
+	}
+	o.mergeSwarm(i)
+}
+
+func (o Neo4j) mergeSwarm(i qtypes.DockerInfo) {
+	cypher := `
+	MATCH (n:DockerEngine {id:{engine_id}})
+	MERGE (sn:SwarmNode {id: {node_id}})
+        ON CREATE SET sn.addr={node_addr},sn.created={time},sn.last_seen={time}
+        ON MATCH SET sn.addr={node_addr},sn.last_seen={time}
+    MERGE (s:Swarm {id: {swarm_id}})
+        ON CREATE SET s.created={swarm_created},s.last_seen={time},s.updated={swarm_updated}
+        ON MATCH SET s.last_seen={time}
+    MERGE (n)-[:IS]->(de)
+    MERGE (sn)-[:PART]->(s)`
+	m := map[string]interface{}{"time": time.Now().UnixNano()}
+	m["node_id"] = i.Info.Swarm.NodeID
+	m["node_addr"] = i.Info.Swarm.NodeAddr
+	m["engine_id"] = i.Info.ID
+	m["swarm_id"] = i.Info.Swarm.Cluster.ID
+	m["swarm_created"] = i.Info.Swarm.Cluster.CreatedAt.UnixNano()
+	m["swarm_updated"] = i.Info.Swarm.Cluster.UpdatedAt.UnixNano()
 	err := o.execCypher(cypher, m)
 	if err != nil {
 		log.Printf("[EE] Error during handleInfo: '%s' '%v'\n", err, i)
@@ -390,7 +414,6 @@ func (o Neo4j) createDockerImage(i qtypes.DockerImageSummary) {
         MERGE (ni)<-[:IS]-(t:ImageTag {name: {repo_tag}})`
 		o.execCypher(cypher, m)
 	}
-
 }
 
 func (o Neo4j) handleDockerImageSummary(i qtypes.DockerImageSummary) {
@@ -469,13 +492,33 @@ func (o Neo4j) Run() {
 				o.handleSwarmNode(val)
 			case qtypes.DockerImageSummary:
 				o.handleDockerImageSummary(val)
-			case dtypes.Info:
+			case qtypes.DockerInfo:
 				o.handleInfo(val)
 			case qtypes.DockerContainer:
 				o.handleInventoryContainer(val)
+			case qtypes.SwarmService:
+				o.handleSwarmService(val)
 			default:
 				log.Printf("[WW] Do not recognise: %v", reflect.TypeOf(val))
 			}
 		}
+	}
+}
+
+func (o Neo4j) handleSwarmService(s qtypes.SwarmService) {
+	cypher := `
+    MATCH (s:Swarm {id: {swarm_id}})
+    MERGE (svc:SwarmService {id: {id}})
+        ON MATCH SET svc.last_seen={time},svc.updated_at={updated}
+        ON CREATE SET svc.created={time},svc.last_seen={time},svc.name={name}
+    MERGE (s)<-[:PARTOF]-(svc)`
+	m := map[string]interface{}{"id": s.Service.ID, "name": s.Spec.Name}
+	m["created"] = s.CreatedAt.UnixNano()
+	m["updated"] = s.UpdatedAt.UnixNano()
+	m["time"] = time.Now().UnixNano()
+	m["swarm_id"] = s.Info.Swarm.Cluster.ID
+	err := o.execCypher(cypher, m)
+	if err != nil {
+		log.Printf("[EE] Error during handleSwarmService: '%s' '%v'\n", err, m)
 	}
 }
