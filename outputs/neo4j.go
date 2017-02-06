@@ -39,12 +39,12 @@ func (o Neo4j) execCypher(cypher string, m map[string]interface{}) error {
 	stmt, err := o.Conn.PrepareNeo(cypher)
 	defer stmt.Close()
 	if err != nil {
-		log.Printf("[EE] during PrepareNeo (%s): %s", cypher, m)
+		log.Printf("[EE] during PrepareNeo: %s", err.Error())
 		return err
 	}
 	_, err = stmt.ExecNeo(m)
 	if err != nil {
-		log.Printf("[EE] during ExecNeo: (%s): %s", cypher, m)
+		log.Printf("[EE] during ExecNeo: %s", err.Error())
 		return err
 	}
 	return nil
@@ -491,11 +491,73 @@ func (o Neo4j) Run() {
 				o.handleSwarmService(val)
 			case qtypes.SwarmTask:
 				o.handleSwarmTask(val)
+			case qtypes.DockerNetworkResource:
+				o.handleDockerNetworkResource(val)
+			case qtypes.DockerVolume:
+				o.handleDockerVolumes(val)
 			default:
 				log.Printf("[WW] Do not recognise: %v", reflect.TypeOf(val))
 			}
 		}
 	}
+}
+
+func (o Neo4j) handleDockerVolumes(v qtypes.DockerVolume) {
+	/*log.Printf("v.Volume> Name:%s, v.Volume:%v", v.Name, v.Volume)
+	log.Printf("        Driver: %v, Labels:%v", v.Driver, v.Labels)
+	log.Printf("        Options: %v, Scope:%v", v.Options, v.Scope)
+	log.Printf("        Status: %v, UserData:%v", v.Status, v.UsageData)*/
+	if v.Scope == "local" {
+		cypher := `
+	    MATCH (de:DockerEngine {id:{engine_id}})
+        MERGE (vd:DockerVolumeDriver {name: {vol_driver}})
+        MERGE (v:DockerVolume {id: {id}, name: {id}})
+            ON CREATE SET v.created={created},v.last_seen={now},v.path={vol_path}
+            ON MATCH SET v.last_seen={now}
+        MERGE (vd)<-[:IS]-(v)
+        MERGE (de)<-[:PARTOF]-(v)`
+		m := map[string]interface{}{"id": v.Name, "now": time.Now().UnixNano()}
+		m["engine_id"] = v.Info.ID
+		m["created"] = time.Now().UnixNano()
+		m["vol_driver"] = v.Driver
+		m["vol_path"] = v.Mountpoint
+		o.execCypher(cypher, m)
+	} else {
+		cypher := `
+	    MATCH (s:Swarm {id: {swarm_id}})
+        MERGE (vd:DockerVolumeDriver {name: {vol_driver}})
+        MERGE (v:DockerVolume {id: {id}, name: {id}})
+            ON CREATE SET v.created={created},v.last_seen={now},v.path={vol_path}
+            ON MATCH SET v.last_seen={now}
+        MERGE (vd)<-[:IS]-(v)
+        MERGE (s)<-[:PARTOF]-(v)`
+		m := map[string]interface{}{"id": v.Name, "now": time.Now().UnixNano()}
+		m["swarm_id"] = v.Info.Swarm.Cluster.ID
+		m["vol_driver"] = v.Driver
+		m["vol_path"] = v.Mountpoint
+		o.execCypher(cypher, m)
+
+	}
+}
+
+func (o Neo4j) handleDockerNetworkResource(n qtypes.DockerNetworkResource) {
+	// Create Network linked to the engine
+	// QUESTION: Also to the SWARM Cluster?
+	//log.Printf("Net> ID:%s, Name:%s, Driver:%s", n.ID, n.Name, n.Driver)
+	cypher := `
+	    MATCH (de:DockerEngine {id:{engine_id}})
+        MERGE (nd:DockerNetworkDriver {name: {net_driver}})
+	    MERGE (n:DockerNetwork {id: {net_id}})
+	        ON CREATE SET n.created={created},n.last_seen={now},n.name={net_name}
+	        ON MATCH SET n.last_seen={now}
+	    MERGE (de)<-[:PARTOF]-(n)
+        MERGE (n)-[:IS]->(nd)`
+	m := map[string]interface{}{"net_id": n.ID, "created": n.Created.UnixNano()}
+	m["net_driver"] = n.Driver
+	m["net_name"] = n.Name
+	m["now"] = time.Now().UnixNano()
+	m["engine_id"] = n.Info.ID
+	o.execCypher(cypher, m)
 }
 
 func (o Neo4j) handleSwarmTask(t qtypes.SwarmTask) {
