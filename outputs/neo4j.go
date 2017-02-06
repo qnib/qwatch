@@ -39,12 +39,15 @@ func (o Neo4j) execCypher(cypher string, m map[string]interface{}) error {
 	stmt, err := o.Conn.PrepareNeo(cypher)
 	defer stmt.Close()
 	if err != nil {
-		log.Printf("[EE] during PrepareNeo (%s): %s", cypher, m)
+		log.Println("[EE] during PrepareNeo: ", err)
+		log.Printf("    CYPHER: %s", cypher)
 		return err
 	}
 	_, err = stmt.ExecNeo(m)
 	if err != nil {
-		log.Printf("[EE] during ExecNeo: (%s): %s", cypher, m)
+		log.Println("[EE] during ExecNeo: ", err.Error())
+		log.Printf("    DICT: %s", m)
+		log.Printf("    CYPHER: %s", cypher)
 		return err
 	}
 	return nil
@@ -57,7 +60,8 @@ func (o Neo4j) handleNetwork(qm qtypes.Qmsg) error {
         MATCH (de:DockerEngine {id:{engine_id}})
         MATCH (t:DockerNetworkDriver {name: {network_type}})
         CREATE (n:DockerNetwork {name: {name}, id: {network_id}, created: {time}})
-			MERGE (de)<-[:PartOf]-(n)<-[:IS {created: {time}}]-(s)
+			MERGE (de)<-[:PartOf]-(n)
+            MERGE (n)<-[:IS {created: {time}}]-(s)
             MERGE (n)-[:IS]->(t)`
 		m := map[string]interface{}{"name": qm.Network.Name, "time": qm.TimeNano}
 		m["network_id"] = qm.Network.ID
@@ -491,11 +495,33 @@ func (o Neo4j) Run() {
 				o.handleSwarmService(val)
 			case qtypes.SwarmTask:
 				o.handleSwarmTask(val)
+			case qtypes.DockerNetworkResource:
+				o.handleDockerNetworkResource(val)
 			default:
 				log.Printf("[WW] Do not recognise: %v", reflect.TypeOf(val))
 			}
 		}
 	}
+}
+
+func (o Neo4j) handleDockerNetworkResource(n qtypes.DockerNetworkResource) {
+	// Create Network linked to the engine
+	// QUESTION: Also to the SWARM Cluster?
+	log.Printf("Net> ID:%s, Name:%s, Driver:%s", n.ID, n.Name, n.Driver)
+	cypher := `
+	    MATCH (de:DockerEngine {id:{engine_id}})
+        MERGE (nd:DockerNetworkDriver {name: {net_driver}})
+	    MERGE (n:DockerNetwork {id: {net_id}})
+	        ON CREATE SET n.created={created},n.last_seen={now},n.name={net_name}
+	        ON MATCH SET n.last_seen={now}
+	    MERGE (de)<-[:PARTOF]-(n)
+        MERGE (n)-[:IS]->(nd)`
+	m := map[string]interface{}{"net_id": n.ID, "created": n.Created.UnixNano()}
+	m["net_driver"] = n.Driver
+	m["net_name"] = n.Name
+	m["now"] = time.Now().UnixNano()
+	m["engine_id"] = n.Info.ID
+	o.execCypher(cypher, m)
 }
 
 func (o Neo4j) handleSwarmTask(t qtypes.SwarmTask) {

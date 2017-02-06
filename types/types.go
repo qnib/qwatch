@@ -180,6 +180,12 @@ type DockerInfo struct {
 	Info types.Info
 }
 
+// DockerNetworkResource is a superset, which passes along the Info
+type DockerNetworkResource struct {
+	types.NetworkResource
+	Info types.Info
+}
+
 // SwarmService is a superset, which passes along the EngineID
 type SwarmService struct {
 	swarm.Service
