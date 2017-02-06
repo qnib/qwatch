@@ -12,6 +12,8 @@ input:
         swarm:
             tick: 15
         services:
-            tick: 10
+            tick: 1
+        tasks:
+            tick: 1
         containers:
             tick: 1

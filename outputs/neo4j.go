@@ -39,12 +39,12 @@ func (o Neo4j) execCypher(cypher string, m map[string]interface{}) error {
 	stmt, err := o.Conn.PrepareNeo(cypher)
 	defer stmt.Close()
 	if err != nil {
-		log.Printf("[EE] during PrepareNeo (%s): %s", cypher, err)
+		log.Printf("[EE] during PrepareNeo (%s): %s", cypher, m)
 		return err
 	}
 	_, err = stmt.ExecNeo(m)
 	if err != nil {
-		log.Printf("[EE] during ExecNeo: (%s): %s", cypher, err)
+		log.Printf("[EE] during ExecNeo: (%s): %s", cypher, m)
 		return err
 	}
 	return nil
@@ -63,10 +63,7 @@ func (o Neo4j) handleNetwork(qm qtypes.Qmsg) error {
 		m["network_id"] = qm.Network.ID
 		m["network_type"] = qm.Network.Type
 		m["engine_id"] = qm.EngineID
-		err := o.execCypher(cypher, m)
-		if err != nil {
-			return err
-		}
+		return o.execCypher(cypher, m)
 	case "destroy":
 		cypher := `MATCH (c:NetworkState {name: 'created'})
             MATCH (r:NetworkState {name: 'removed'})
@@ -78,10 +75,7 @@ func (o Neo4j) handleNetwork(qm qtypes.Qmsg) error {
 		m := map[string]interface{}{"name": qm.Network.Name, "time": qm.TimeNano}
 		m["network_id"] = qm.Network.ID
 		m["engine_id"] = qm.EngineID
-		err := o.execCypher(cypher, m)
-		if err != nil {
-			return err
-		}
+		return o.execCypher(cypher, m)
 	case "connect":
 		cypher := `
         MATCH (n:DockerNetwork {id: {network_id}})
@@ -92,14 +86,11 @@ func (o Neo4j) handleNetwork(qm qtypes.Qmsg) error {
 		m["network_id"] = qm.Network.ID
 		m["container_id"] = qm.Network.ContainerID
 		m["engine_id"] = qm.EngineID
-		err := o.execCypher(cypher, m)
-		if err != nil {
-			return err
-		}
+		return o.execCypher(cypher, m)
 	default:
 		log.Printf("do not understand network-action: %s", qm.Action)
+		return nil
 	}
-	return nil
 }
 
 func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
@@ -498,6 +489,8 @@ func (o Neo4j) Run() {
 				o.handleInventoryContainer(val)
 			case qtypes.SwarmService:
 				o.handleSwarmService(val)
+			case qtypes.SwarmTask:
+				o.handleSwarmTask(val)
 			default:
 				log.Printf("[WW] Do not recognise: %v", reflect.TypeOf(val))
 			}
@@ -505,6 +498,28 @@ func (o Neo4j) Run() {
 	}
 }
 
+func (o Neo4j) handleSwarmTask(t qtypes.SwarmTask) {
+	// Create Tasks linked to service - container might not be up
+	cypher := `
+    MATCH (svc:SwarmService {id: {service_id}})
+    MERGE (t:SwarmTask {id: {task_id}})
+        ON CREATE SET t.created={created},t.last_seen={now}
+        ON MATCH SET t.last_seen={now}
+    MERGE (svc)<-[:PARTOF]-(t)`
+	m := map[string]interface{}{"task_id": t.ID, "created": t.CreatedAt.UnixNano()}
+	m["now"] = time.Now().UnixNano()
+	m["service_id"] = t.ServiceID
+	//log.Printf("Task> ID:%s, Slot:%d, Task.DesiredState:%s, Task.Status:%s", t.ID, t.Task.Slot, t.Task.DesiredState, t.Task.Status.State)
+	o.execCypher(cypher, m)
+	// check if container is created already
+	if t.Task.Status.State == "running" {
+		cypher = `
+        MATCH (c:Container {id: {container_id}}), (t:SwarmTask {id: {task_id}})
+        MERGE (t)-[:IS]->(c)`
+		m["container_id"] = t.Task.Status.ContainerStatus.ContainerID
+		o.execCypher(cypher, m)
+	}
+}
 func (o Neo4j) handleSwarmService(s qtypes.SwarmService) {
 	cypher := `
     MATCH (s:Swarm {id: {swarm_id}})
