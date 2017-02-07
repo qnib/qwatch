@@ -18,19 +18,24 @@ It will use the information fetched from the inputs of `qwatch` and derived inve
     - [x] Images
     - [x] Containers
     - [x] network configuration
-- [ ] **0.7.2.x** create `docker-api` input
+- [x] **0.7.2.x** create `docker-api` input
     - [x] Fetch and push engine `Info()`
     - [x] fetch and push `swarm.Node`
-    - [ ] fetch and push `ContainerList` #22
+    - [x] fetch and push `ContainerList` #22
     - [x] fetch and push `ImageList` #23
-    - [ ] fetch and push `NetworkList` #24
-    - [ ] fetch and push `VolumeList` #25
-    - [ ] fetch and push `ServiceList` #26
-    - [ ] fetch and push `TasksList` #27
+    - [x] fetch and push `NetworkList` #24
+    - [x] fetch and push `VolumeList` #25
+    - [x] fetch and push `ServiceList` #26
+    - [x] fetch and push `TasksList` #27
+
+- [ ] **0.8** Optimising 
+    - [ ] Create Indices
+    - [ ] Use bloom filter?
+    - [ ] Extract Neo4j inventory logic to qnib/qinventory
+
+- [ ] implement deriving inventory from `docker-logs` input (does it make sense)
+    - [ ] which processes are running inside
+    - [ ] how are the files doing
     - [ ] fetch and push `SecretList` #28
     - [ ] fetch and push `PluginList` #29
     - [ ] fetch and push `CheckpointList` #30
-
-- [ ] **0.7.x** implement deriving inventory from `docker-logs` input
-    - [ ] which processes are running inside
-    - [ ] how are the files doing
