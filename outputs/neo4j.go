@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/deckarep/golang-set"
@@ -107,7 +108,7 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 	case "create":
 		cypher := `
 		MATCH (s:ContainerState {name: 'created'}) MATCH (de:DockerEngine {id:{engine_id}})
-			CREATE UNIQUE (de)<-[:PartOf]-(c:Container {name: {name}, container_id: {container_id}, created: {time}})<-[:IS {created: {time}}]-(s)`
+			CREATE UNIQUE (de)<-[:PartOf]-(c:Container {container_id: {container_id}, created: {time}})<-[:IS {created: {time}}]-(s)`
 		m := map[string]interface{}{"name": qm.Container.ContainerName, "time": qm.TimeNano}
 		m["container_id"] = qm.Container.ContainerID
 		m["engine_id"] = qm.EngineID
@@ -116,15 +117,26 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 			log.Println("[EE] during ExecCypher: ", err)
 			return err
 		}
-		log.Printf("[DD] Created '%s'", qm.Container.ContainerID)
-		cypher = `MATCH (c:Container {container_id: {container_id}})
-            MATCH (i:DockerImage {name: {img_name}})
-            MERGE (c)-[:USE {created: {time}}]->(i)`
-		imgName := utils.ParseImageName(qm.Container.ImageName)
-		m = map[string]interface{}{"container_id": qm.Container.ContainerID, "img_name": imgName.String(), "time": qm.TimeNano}
+		cypher = `MATCH (c:Container {container_id:{container_id}})
+        MERGE (n:ContainerName {name: {container_name}})
+        MERGE (n)<-[i:IS]-(c)
+            ON MATCH SET i.last_seen={time}
+            ON CREATE SET i.created={time},i.last_seen={time}`
+		m["container_name"] = qm.Container.ContainerName
 		err = o.execCypher(cypher, m)
 		if err != nil {
-			log.Printf("[WW] Linked '%s' to Image '%s' failed", qm.Container.ContainerID, imgName.String())
+			log.Printf("[EE] Error during handleInventoryContainer: '%s' '%v'\n", err, m)
+		}
+		log.Printf("[DD] Created '%s'", qm.Container.ContainerID)
+		cypher = `MATCH (c:Container {container_id: {container_id}})
+            MATCH (i:DockerImage {id: {img_name}})
+            MERGE (c)-[:USE {created: {time}}]->(i)`
+		m = map[string]interface{}{"container_id": qm.Container.ContainerID}
+		m["img_name"] = qm.Container.ImageID
+		m["time"] = qm.TimeNano
+		err = o.execCypher(cypher, m)
+		if err != nil {
+			log.Printf("[WW] Linked '%s' to DockerImage '%s' failed", qm.Container.ContainerID, qm.Container.ImageID)
 		} else {
 			log.Printf("[DD] Created '%s'", qm.Container.ContainerID)
 		}
@@ -243,6 +255,48 @@ func (o Neo4j) handleContainer(qm qtypes.Qmsg) error {
 	default:
 		log.Printf("[II] Action is not recognized: %s", qm.Action)
 		return nil
+	}
+}
+
+// Handles containers comming in as inventory output
+func (o Neo4j) handleInventoryContainer(c qtypes.DockerContainer) {
+	cypher := `
+	MATCH (d:DockerEngine {id:{engine_id}})
+    MERGE (c:Container {container_id:{id}})
+    	ON MATCH SET c.last_seen={time}
+		ON CREATE SET c.created={created},c.last_seen={time}
+    MERGE (d)<-[:PartOf]-(c)`
+	m := map[string]interface{}{"id": c.ID}
+	m["engine_id"] = c.EngineID
+	m["image_id"] = c.Container.ImageID
+	m["image_name"] = c.Container.Image
+	m["created"] = time.Unix(c.Created, 0).UnixNano()
+	m["time"] = time.Now().UnixNano()
+	err := o.execCypher(cypher, m)
+	if err != nil {
+		log.Printf("[EE] Error during handleInventoryContainer: '%s' '%v'\n", err, m)
+	}
+	for _, name := range c.Names {
+		name = strings.Trim(name, "/")
+		log.Printf("id:%s / name: %s / image:%s imageID:%s", c.ID, name, c.Image, c.ImageID)
+		cypher = `MATCH (c:Container {container_id:{id}})
+        MERGE (n:ContainerName {name: {container_name}})
+        MERGE (n)<-[i:IS]-(c)
+            ON MATCH SET i.last_seen={time}
+            ON CREATE SET i.created={created},i.last_seen={time}`
+		m["container_name"] = name
+		err = o.execCypher(cypher, m)
+		if err != nil {
+			log.Printf("[EE] Error during handleInventoryContainer: '%s' '%v'\n", err, m)
+		}
+	}
+	cypher = `
+    MATCH (c:Container {container_id:{id}})
+    MATCH (i:DockerImage {id: {image_id}})<-[:IS]-(t:ImageTag {name: {image_name}})
+    MERGE (c)-[:USE]->(i)`
+	err = o.execCypher(cypher, m)
+	if err != nil {
+		log.Printf("[EE] Error during handleInventoryContainer: '%s' '%v'\n", err, m)
 	}
 }
 
@@ -417,6 +471,8 @@ func (o Neo4j) Run() {
 				o.handleDockerImageSummary(val)
 			case dtypes.Info:
 				o.handleInfo(val)
+			case qtypes.DockerContainer:
+				o.handleInventoryContainer(val)
 			default:
 				log.Printf("[WW] Do not recognise: %v", reflect.TypeOf(val))
 			}
