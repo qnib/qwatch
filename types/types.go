@@ -186,6 +186,12 @@ type SwarmService struct {
 	Info types.Info
 }
 
+// SwarmTask is a superset, which passes along the EngineID
+type SwarmTask struct {
+	swarm.Task
+	Info types.Info
+}
+
 func (di DockerImageSummary) String() string {
 	var name string
 	if len(di.RepoTags) > 0 {
