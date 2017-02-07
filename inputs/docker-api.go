@@ -49,6 +49,7 @@ func (de DockerAPI) Run() {
 			de.queryImages(t)
 			de.queryContainers(t)
 			de.queryServices(t)
+			de.queryTasks(t)
 		}
 	}
 }
@@ -138,6 +139,29 @@ func (de DockerAPI) queryServices(t interface{}) {
 			qsvc.Service = service
 			qsvc.Info = info
 			de.QChan.Inventory.Send(*qsvc)
+		}
+	}
+}
+
+func (de DockerAPI) queryTasks(t interface{}) {
+	taskTick, _ := de.Cfg.Int("input.docker-api.tasks.tick")
+	tick := float64(t.(int64))
+	if !(tick == 0 || math.Mod(tick, float64(taskTick)) == 0) {
+		return
+	}
+	info, err := de.cli.Info(context.Background())
+	if err != nil {
+		log.Printf("[EE] Error during Info(): ", err)
+	}
+	tasks, err := de.cli.TaskList(context.Background(), types.TaskListOptions{})
+	if err != nil {
+		log.Printf("[EE] Error during ServiceList(): ", err)
+	} else {
+		for _, task := range tasks {
+			qtask := new(qtypes.SwarmTask)
+			qtask.Task = task
+			qtask.Info = info
+			de.QChan.Inventory.Send(*qtask)
 		}
 	}
 }
