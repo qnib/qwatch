@@ -174,6 +174,18 @@ type DockerContainer struct {
 	EngineID string
 }
 
+// DockerInfo is a superset of types.Container, which passes along the EngineID
+type DockerInfo struct {
+	types.Container
+	Info types.Info
+}
+
+// SwarmService is a superset, which passes along the EngineID
+type SwarmService struct {
+	swarm.Service
+	Info types.Info
+}
+
 func (di DockerImageSummary) String() string {
 	var name string
 	if len(di.RepoTags) > 0 {

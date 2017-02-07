@@ -48,6 +48,7 @@ func (de DockerAPI) Run() {
 			de.querySwarm(t)
 			de.queryImages(t)
 			de.queryContainers(t)
+			de.queryServices(t)
 		}
 	}
 }
@@ -59,10 +60,12 @@ func (de DockerAPI) querySwarm(t interface{}) {
 		return
 	}
 	info, err := de.cli.Info(context.Background())
+	qinfo := new(qtypes.DockerInfo)
+	qinfo.Info = info
 	if err != nil {
 		log.Printf("[EE] Error during Info(): %v >err> %s", info, err)
 	} else {
-		de.QChan.Inventory.Send(info)
+		de.QChan.Inventory.Send(*qinfo)
 	}
 
 	nodes, err := de.cli.NodeList(context.Background(), types.NodeListOptions{})
@@ -112,6 +115,29 @@ func (de DockerAPI) queryContainers(t interface{}) {
 			qcnt.Container = container
 			qcnt.EngineID = de.info.ID
 			de.QChan.Inventory.Send(*qcnt)
+		}
+	}
+}
+
+func (de DockerAPI) queryServices(t interface{}) {
+	svcTick, _ := de.Cfg.Int("input.docker-api.services.tick")
+	tick := float64(t.(int64))
+	if !(tick == 0 || math.Mod(tick, float64(svcTick)) == 0) {
+		return
+	}
+	info, err := de.cli.Info(context.Background())
+	if err != nil {
+		log.Printf("[EE] Error during Info(): ", err)
+	}
+	services, err := de.cli.ServiceList(context.Background(), types.ServiceListOptions{})
+	if err != nil {
+		log.Printf("[EE] Error during ServiceList(): ", err)
+	} else {
+		for _, service := range services {
+			qsvc := new(qtypes.SwarmService)
+			qsvc.Service = service
+			qsvc.Info = info
+			de.QChan.Inventory.Send(*qsvc)
 		}
 	}
 }
